@@ -1,0 +1,4 @@
+- [OK] adicionar anotações de tipos no Protocol.py (ver PEP 484)
+- adicionar opção de com ou sem reposição no RandomTeacher
+- terminar de codar Teacher WTF
+- [OK] colher estatisticas por iteração
