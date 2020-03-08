@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 from .context import machine_teacher
 from sklearn.datasets import load_boston
+from sklearn.datasets import load_iris
 
 
 class BasicTest1(unittest.TestCase):
@@ -38,6 +39,19 @@ class RandomTeacherTest(unittest.TestCase):
 		L1 = machine_teacher.Learners.LinearRegressionLearner()
 		#T1 = machine_teacher.RandomTeacher(1,506)
 		T1 = machine_teacher.Teachers.RandomTeacher(1,506)
+		res = machine_teacher.teach(T1,L1,X,y)
+		print("\n\n************************************\n")
+		print("MSE =", _get_erro(y,res.h))
+		print("----------")
+		print(res)
+		print("----------")
+		print("len(X) =", X.shape[0])
+		return True
+
+	def test_random_teacher_3(self):
+		X, y = load_iris(return_X_y=True)
+		L1 = machine_teacher.Learners.RandomForestLearner()
+		T1 = machine_teacher.Teachers.RandomTeacher(50,1)
 		res = machine_teacher.teach(T1,L1,X,y)
 		print("\n\n************************************\n")
 		print("MSE =", _get_erro(y,res.h))

@@ -35,7 +35,7 @@ def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels) -> TeachResult:
 	timer = Timer()
 	timer.start()
-	teacher_log = [T.get_header()]
+	teacher_log = [T.get_log_header()]
 
 	# wrappers
 	X = wrapp_input_space(X)

@@ -20,11 +20,11 @@ class Teacher:
 	def get_new_examples(self, h: Labels):
 		raise NotImplementedError
 
-	def get_header(self):
-		return [""]
+	def get_log_header(self):
+		return []
 
 	def get_log_line(self, h: Labels):
-		return [""]
+		return []
 
 	def _get_wrong_labels_id(self, y2: Labels):
 		wrong_labels = self.y != y2

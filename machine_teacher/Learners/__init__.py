@@ -1,2 +1,3 @@
 from .LinearRegressionLearner import LinearRegressionLearner
 from .LogisticRegressionLearner import LogisticRegressionLearner
+from .RandomForestLearner import RandomForestLearner
