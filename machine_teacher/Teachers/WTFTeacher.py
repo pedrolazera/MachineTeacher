@@ -40,13 +40,14 @@ class WTFTeacher(GenericTeacher.Teacher):
 
 		if self.num_iters == 1:
 			n = self.S_first_batch_size
-			selected_ids = self._random.choice(self.ids, n,	replace=False)
+			selected_ids = self._random.choice(self.ids, n,	replace=False) # precisa ser estratificado
 		else:
 			wrong_labels = self._get_wrong_labels_id(h)
 			S = []
 			while S is not None:
-				delta_w = self._update_weights(wrong_labels)
-				S = self._select_examples(wrong_labels, delta_w)
+				new_w = self._get_new_weights(wrong_labels)
+				delta_w = (new_w - self.w[x])/2
+				S = self._select_examples(wrong_labels, delta_w[wrong_labels]) #cabe melhoria
 
 			selected_ids = np.array(S)
 
@@ -55,28 +56,29 @@ class WTFTeacher(GenericTeacher.Teacher):
 
 
 	def _get_delta_h(self, h):
-		return self.ids[self.h != self.y]
+		delta_h = self._get_wrong_labels_id(h)
+		delta_h = [example_id for example_id in delta_h if not self.selected[example_id]] #analisar se cabe melhoria com setdiff1d
+		return delta_h
 
 	def _restart_wights(self):
 		self.n *= 2
 		self.w.fill(1/(2*self.m))
 
-	def _update_weights(self, wrong_labels):
-		v = np.sum(self.w[wrong_labels])
+	def _get_new_weights(self, wrong_labels):
+		new_w = np.copy(self.w)
+		v = np.sum(new_w[wrong_labels])
+
 		if v >= 1.0: #The algorithm failed
 			self.n *= 2
-			self.w.fill(1/(2*self.m))
+			new_w.fill(1/(2*self.m))
 			v = (1/(2*self.m)) * wrong_labels.size
 		
 		k = 1
 		while v*k < 1.0:
 			k = k*2
 
-		old_w = [self.w[x] for x in wrong_labels]			
-		self.w[wrong_labels] *= k			    
-		delta_w = [(self.w[x]-old_w[i])/2 for i,x in enumerate(wrong_labels)]
-
-		return delta_w
+		new_w[wrong_labels] *= k
+		return new_w
 
 	def _select_examples(self, wrong_labels, delta_w):
 		random_numbers = self._random.rand(self.n)

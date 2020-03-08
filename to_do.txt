@@ -3,3 +3,4 @@
 - terminar de codar Teacher WTF
 - [OK] colher estatisticas por iteração
 - conferir a questão de algum teacher específico não se beneficiar com a escolha do conjunto inicial.
+ * Estratificado por classe
