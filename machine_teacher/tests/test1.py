@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from .context import project4
+from .context import machine_teacher
 from sklearn.datasets import load_boston
 
 
@@ -11,7 +11,7 @@ class BasicTest1(unittest.TestCase):
 class LinRegTest(unittest.TestCase):
 	def test_linear_regressor(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = project4.Learners.LinearRegressionLearner()
+		L1 = machine_teacher.Learners.LinearRegressionLearner()
 		L1.fit(X,y)
 		h = L1.predict(X)
 		print("MSE =", _get_erro(y,h))
@@ -21,10 +21,10 @@ class LinRegTest(unittest.TestCase):
 class RandomTeacherTest(unittest.TestCase):
 	def test_random_teacher_1(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = project4.Learners.LinearRegressionLearner()
-		#T1 = project4.RandomTeacher(1,10)
-		T1 = project4.Teachers.RandomTeacher(1,10)
-		res = project4.teach(T1,L1,X,y)
+		L1 = machine_teacher.Learners.LinearRegressionLearner()
+		#T1 = machine_teacher.RandomTeacher(1,10)
+		T1 = machine_teacher.Teachers.RandomTeacher(1,10)
+		res = machine_teacher.teach(T1,L1,X,y)
 		print("\n\n************************************\n")
 		print("MSE =", _get_erro(y,res.h))
 		print("----------")
@@ -35,10 +35,10 @@ class RandomTeacherTest(unittest.TestCase):
 
 	def test_random_teacher_2(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = project4.Learners.LinearRegressionLearner()
-		#T1 = project4.RandomTeacher(1,506)
-		T1 = project4.Teachers.RandomTeacher(1,506)
-		res = project4.teach(T1,L1,X,y)
+		L1 = machine_teacher.Learners.LinearRegressionLearner()
+		#T1 = machine_teacher.RandomTeacher(1,506)
+		T1 = machine_teacher.Teachers.RandomTeacher(1,506)
+		res = machine_teacher.teach(T1,L1,X,y)
 		print("\n\n************************************\n")
 		print("MSE =", _get_erro(y,res.h))
 		print("----------")

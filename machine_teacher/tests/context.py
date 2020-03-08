@@ -7,4 +7,4 @@ _BASE_PATH = os.path.abspath(_BASE_PATH)
 
 sys.path.append(_BASE_PATH)
 
-import project4
+import machine_teacher
