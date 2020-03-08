@@ -26,12 +26,7 @@ class RandomTeacherTest(unittest.TestCase):
 		#T1 = machine_teacher.RandomTeacher(1,10)
 		T1 = machine_teacher.Teachers.RandomTeacher(1,10)
 		res = machine_teacher.teach(T1,L1,X,y)
-		print("\n\n************************************\n")
-		print("MSE =", _get_erro(y,res.h))
-		print("----------")
-		print(res)
-		print("----------")
-		print("len(X) =", X.shape[0])
+		_print(X, y, res)
 		return True
 
 	def test_random_teacher_2(self):
@@ -40,12 +35,7 @@ class RandomTeacherTest(unittest.TestCase):
 		#T1 = machine_teacher.RandomTeacher(1,506)
 		T1 = machine_teacher.Teachers.RandomTeacher(1,506)
 		res = machine_teacher.teach(T1,L1,X,y)
-		print("\n\n************************************\n")
-		print("MSE =", _get_erro(y,res.h))
-		print("----------")
-		print(res)
-		print("----------")
-		print("len(X) =", X.shape[0])
+		_print(X, y, res)
 		return True
 
 	def test_random_teacher_3(self):
@@ -53,18 +43,21 @@ class RandomTeacherTest(unittest.TestCase):
 		L1 = machine_teacher.Learners.RandomForestLearner()
 		T1 = machine_teacher.Teachers.RandomTeacher(50,1)
 		res = machine_teacher.teach(T1,L1,X,y)
-		print("\n\n************************************\n")
-		print("MSE =", _get_erro(y,res.h))
-		print("----------")
-		print(res)
-		print("----------")
-		print("len(X) =", X.shape[0])
+		_print(X, y, res)
 		return True
 
 
 def _get_erro(y1, y2):
 	assert y1.size == y2.size, "y1 and y2 should have the same size"
 	return np.sum(np.square(y1 - y2)) / y1.size
+
+def _print(X, y, res):
+	print("\n\n************************************\n")
+	print("MSE =", _get_erro(y, res.h))
+	print("----------")
+	print(res)
+	print("----------")
+	print("len(X) =", X.shape[0])
 		
 
 if __name__ == "__main__":
