@@ -2,7 +2,7 @@ from .. import GenericLearner
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
-class LRandomForestLearner(GenericLearner.Learner):
+class RandomForestLearner(GenericLearner.Learner):
 	def __init__(self, *args, **kwargs):
 		self.model = RandomForestClassifier(*args, **kwargs)
 		super().__init__()
