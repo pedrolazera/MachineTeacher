@@ -1,4 +1,9 @@
 garagem/
-__pycache__
-.ipynb_checkpoints
 duvidas.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# jupyter notebook
+.ipynb_checkpoints
