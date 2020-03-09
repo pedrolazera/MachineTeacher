@@ -22,9 +22,9 @@ def join_input_spaces(X1: InputSpace, X2: InputSpace):
 def wrapp_input_space(X: InputSpace):
 	return np.array(X)
 
-def get_empty_input_space(X: InputSpace):
-	ncols = X.shape[_COL_AXIS]
-	return np.array([], dtype=X.dtype).reshape(0, ncols)
+#def get_empty_input_space(X: InputSpace):
+#	ncols = X.shape[_COL_AXIS]
+#	return np.array([], dtype=X.dtype).reshape(0, ncols)
 
 # Labels functions
 
@@ -39,5 +39,5 @@ def join_labels(y1: Labels, y2: Labels):
 def wrapp_labels(y: Labels):
 	return np.array(y).reshape(-1)
 
-def get_empty_labels(y: Labels):
-	return np.array([], dtype=y.dtype)
+#def get_empty_labels(y: Labels):
+#	return np.array([], dtype=y.dtype)

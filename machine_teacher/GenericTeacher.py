@@ -6,18 +6,15 @@ from .Definitions import Labels
 
 class Teacher:
 	def start(self, X: InputSpace, y: Labels):
-		self.X = X
-		self.y = y
-		self.ids = np.arange(y.size, dtype=int)
-
-		qtd_rows_X = get_qtd_rows(X)
-		qtd_rows_y = get_qtd_rows(y)
-		assert qtd_rows_X == qtd_rows_X
+		raise NotImplementedError
 
 	def keep_going(self, h: Labels) -> bool:
 		raise NotImplementedError
 
-	def get_new_examples(self, h: Labels):
+	def get_first_examples(self) -> np.ndarray:
+		raise NotImplementedError
+
+	def get_new_examples(self, h: Labels) -> np.ndarray:
 		raise NotImplementedError
 
 	def get_log_header(self):
@@ -25,6 +22,15 @@ class Teacher:
 
 	def get_log_line(self, h: Labels):
 		return []
+
+	def _start(self, X: InputSpace, y: Labels):
+		self.X = X
+		self.y = y
+		self.ids = np.arange(y.size, dtype=int)
+
+		qtd_rows_X = get_qtd_rows(X)
+		qtd_rows_y = get_qtd_rows(y)
+		assert qtd_rows_X == qtd_rows_X
 
 	def _get_wrong_labels_id(self, y2: Labels):
 		wrong_labels = self.y != y2

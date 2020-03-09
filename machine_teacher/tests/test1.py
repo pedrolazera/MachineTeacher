@@ -24,7 +24,7 @@ class RandomTeacherTest(unittest.TestCase):
 		X, y = load_boston(return_X_y=True)
 		L1 = machine_teacher.Learners.LinearRegressionLearner()
 		#T1 = machine_teacher.RandomTeacher(1,10)
-		T1 = machine_teacher.Teachers.RandomTeacher(1,10)
+		T1 = machine_teacher.Teachers.RandomTeacher(0, 1.0, 1)
 		res = machine_teacher.teach(T1,L1,X,y)
 		_print(X, y, res)
 		return True
@@ -33,15 +33,15 @@ class RandomTeacherTest(unittest.TestCase):
 		X, y = load_boston(return_X_y=True)
 		L1 = machine_teacher.Learners.LinearRegressionLearner()
 		#T1 = machine_teacher.RandomTeacher(1,506)
-		T1 = machine_teacher.Teachers.RandomTeacher(1,506)
+		T1 = machine_teacher.Teachers.RandomTeacher(0, 0.25, 4)
 		res = machine_teacher.teach(T1,L1,X,y)
 		_print(X, y, res)
 		return True
 
 	def test_random_teacher_3(self):
 		X, y = load_iris(return_X_y=True)
-		L1 = machine_teacher.Learners.RandomForestLearner()
-		T1 = machine_teacher.Teachers.RandomTeacher(50,1)
+		L1 = machine_teacher.Learners.RandomForestLearner(random_state=0)
+		T1 = machine_teacher.Teachers.RandomTeacher(0, 0.01, 5)
 		res = machine_teacher.teach(T1,L1,X,y)
 		_print(X, y, res)
 		return True

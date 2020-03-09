@@ -1,18 +1,25 @@
 from .. import GenericTeacher
 import numpy as np
 
+# numpy convetions
+_ROW_AXIS = 0
+
 class WTFTeacher(GenericTeacher.Teacher):
-	def start(self, X: InputSpace, y: Labels,
-		frac_start: float = 0.01, frac_stop: float = 0.5,
-		seed: int = 0) -> None:
+	def __init__(frac_start: float = 0.01, frac_stop: float = 0.5,
+		seed: int = 0):
+		self.frac_start = frac_start
+		self.frac_stop = frac_stop
+		self.seed = seed
+
+	def start(self, X: InputSpace, y: Labels) -> None:
 		self.X = X
 		self.y = y
 
-		m = X.shape[0] # nb of rows
+		m = X.shape[_ROW_AXIS] # number of rows
 		self.m = m
 		self.ids = np.arange(m)
 		self.S_max_size = int(m * frac_stop)
-		self.first_batch_size = int(m * frac_start)
+		self.first_batch_size = int(m * self.frac_start)
 		self.num_iters = 0
 		self.selected = np.full(m, False)
 		self._random = np.random.RandomState(self.seed)
