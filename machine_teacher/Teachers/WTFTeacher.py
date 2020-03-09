@@ -11,6 +11,9 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
 		self.seed = seed
+		
+		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
+		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
 	def start(self, X, y) -> None:
 		self.X = X
@@ -33,8 +36,6 @@ class WTFTeacher(GenericTeacher.Teacher):
 		qtd_rows_X = X.shape[_ROW_AXIS]
 		qtd_rows_y = y.shape[_ROW_AXIS]
 		assert qtd_rows_X == qtd_rows_y
-		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
-		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
 	def keep_going(self, h) -> bool:
 		if len(self._get_delta_h(h)) == 0:

@@ -1,2 +1,2 @@
 from .RandomTeacher import RandomTeacher
-#from .WTFTeacher import WTFTeacher
+from .WTFTeacher import WTFTeacher

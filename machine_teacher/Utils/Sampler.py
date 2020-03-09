@@ -13,7 +13,7 @@ def get_first_examples(prop, m, classes, y, shuffle_function):
 	shuffle_function(aux)
 	i = 0
 	while (cont < n_samples):
-		if v_cont[y[aux[i]]] < class_samples[.y[aux[i]]]:
+		if v_cont[y[aux[i]]] < class_samples[y[aux[i]]]:
 			new_ids.append(aux[i])
 			cont+=1
 			v_cont[y[aux[i]]] += 1
