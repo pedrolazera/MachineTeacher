@@ -1,4 +1,5 @@
 from .. import GenericTeacher
+from ..Utils.Sampler import get_first_examples
 import numpy as np
 
 # numpy convetions
@@ -11,14 +12,14 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.frac_stop = frac_stop
 		self.seed = seed
 
-	def start(self, X: InputSpace, y: Labels) -> None:
+	def start(self, X, y) -> None:
 		self.X = X
 		self.y = y
 
 		m = X.shape[_ROW_AXIS] # number of rows
 		self.m = m
 		self.ids = np.arange(m)
-		self.S_max_size = int(m * frac_stop)
+		self.S_max_size = int(m * self.frac_stop)
 		self.first_batch_size = int(m * self.frac_start)
 		self.num_iters = 0
 		self.selected = np.full(m, False)
@@ -26,6 +27,7 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.w = np.full(m, 1/(2.0*m))	
 		self.samples = []
 		self.n = 1
+		self.classes = np.unique(self.y)
 
 		# double checks
 		qtd_rows_X = X.shape[_ROW_AXIS]
@@ -34,15 +36,22 @@ class WTFTeacher(GenericTeacher.Teacher):
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
-	def keep_going(self, h: Labels) -> bool:
-		if len(self.get_delta_h(h)) == 0:
+	def keep_going(self, h) -> bool:
+		if len(self._get_delta_h(h)) == 0:
 			return False
 		elif len(self.S) >= self.S_max_size:
 			return False
 		else:
 			return True
 
-	def get_new_examples(self, h: Labels):
+	def get_first_examples(self):
+		new_ids = get_first_examples(self.frac_start, self.m,
+			self.classes, self._random.shuffle)
+		new_ids = np.array(new_ids)
+		self.selected[new_ids] = True
+		return new_ids
+
+	def get_new_examples(self, h):
 		self.num_iters += 1
 
 		if self.num_iters == 1:
