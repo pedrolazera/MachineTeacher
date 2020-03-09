@@ -8,7 +8,7 @@ class Teacher:
 	def start(self, X: InputSpace, y: Labels):
 		self.X = X
 		self.y = y
-		self.ids = np.arange(y.size)
+		self.ids = np.arange(y.size, dtype=int)
 
 		qtd_rows_X = get_qtd_rows(X)
 		qtd_rows_y = get_qtd_rows(y)
