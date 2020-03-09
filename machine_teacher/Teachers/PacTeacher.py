@@ -33,7 +33,7 @@ class PacTeacher(GenericTeacher.Teacher):
 	def keep_going(self, h):
 		if self.S_current_size >= self.S_max_size:
 			return False
-		elif self._get_wrong_labels_id(h).size == 0: # delta_h = {}
+		elif len(self._get_wrong_labels_id(h)) == 0: # delta_h = {}
 			return False
 		else:
 			return True
@@ -55,9 +55,9 @@ class PacTeacher(GenericTeacher.Teacher):
 	def get_new_examples(self, h):
 		# build slice
 		_start = self.free_spot
-		batch_size = min(self.batch_size, self.S_max_size - self.S_current_size)
-		_end = min(self.free_spot + batch_size, self.m)
-		_slice = [ _start : _end ]
+		_batch_size = min(self.batch_size, self.S_max_size - self.S_current_size)
+		_end = min(self.free_spot + _batch_size, self.m)
+		_slice = [_start:_end]
 		new_ids = self.shuffled_ids[_slice]
 
 		self.free_spot += len(new_ids)

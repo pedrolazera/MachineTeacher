@@ -4,3 +4,4 @@
 - [OK] colher estatisticas por iteração
 - conferir a questão de algum teacher específico não se beneficiar com a escolha do conjunto inicial.
  * Estratificado por classe
+- fazer 1o teste: PacTeacher + RandomForest tem que bater com o do projeto antigo
