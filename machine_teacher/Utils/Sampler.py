@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_first_examples(prop, m, classes, y, shuffle_function):
 	new_ids = []
 	n_samples = prop*m

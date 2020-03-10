@@ -12,23 +12,23 @@ from .Definitions import wrapp_input_space
 from .Definitions import get_qtd_columns
 from .Definitions import get_qtd_rows
 
-class TeachResult:
-	def __init__(self, S, h, timer,
+class _TeachResult:
+	def __init__(self, S_ids, h, timer,
 		num_iters, teacher_log):
-		self.S = S
+		self.S_ids = S_ids
 		self.h = h
 		self.timer = timer
 		self.num_iters = num_iters
 		self.teacher_log = teacher_log
 
 	def __str__(self):
-		s1 = "sample size = {}".format(get_qtd_rows(self.S))
+		s1 = "sample size = {}".format(len(S_ids))
 		s2 = "num_iters = {}".format(self.num_iters)
 		s3 = str(self.timer)
 		return '\n'.join((s1,s2,s3))
 
 def teach(T: Teacher, L: Learner,
-	X: InputSpace, X_labels: Labels) -> TeachResult:
+	X: InputSpace, X_labels: Labels) -> _TeachResult:
 	timer = Timer()
 	timer.start()
 	teacher_log = [T.get_log_header()]
@@ -48,8 +48,8 @@ def teach(T: Teacher, L: Learner,
 	new_ids = T.get_first_examples()
 	timer.tock()
 
-	h = run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
 	S_ids = np.append(S_ids, new_ids)
+	h = _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
 	
 	num_iters = 1
 	while T.keep_going(h):
@@ -60,16 +60,15 @@ def teach(T: Teacher, L: Learner,
 		timer.tock()
 
 		S_ids = np.append(S_ids, new_ids)
-		h = run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
+		h = _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
 
 	timer.finish()
-	S = X[S_ids]
 
 	assert num_iters+1 == len(teacher_log)
 
-	return TeachResult(S, h, timer, num_iters, teacher_log)
+	return _TeachResult(S_ids, h, timer, num_iters, teacher_log)
 
-def run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log):
+def _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log):
 	# update input subspace S and respective labels S_labels
 	timer.tick("build training set and labels for new examples")
 	S_i = X[new_ids]

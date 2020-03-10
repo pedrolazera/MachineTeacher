@@ -18,8 +18,7 @@ class PacTeacher(GenericTeacher.Teacher):
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
 	def start(self, X, y):
-		self.X = X
-		self.y = y
+		super()._start(X, y)
 		self._random = np.random.RandomState(self.seed)
 		self.m = y.size
 
@@ -39,8 +38,9 @@ class PacTeacher(GenericTeacher.Teacher):
 			return True
 
 	def get_first_examples(self):
+		_gambiarra_tmp_shuffle = np.random.RandomState(self.seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
-			self.classes, self._random.shuffle)
+			self.classes, self.y, _gambiarra_tmp_shuffle)
 		new_ids = np.array(new_ids)
 		
 		# update shuffled_ids
@@ -57,23 +57,22 @@ class PacTeacher(GenericTeacher.Teacher):
 		_start = self.free_spot
 		_batch_size = min(self.batch_size, self.S_max_size - self.S_current_size)
 		_end = min(self.free_spot + _batch_size, self.m)
-		_slice = [_start:_end]
-		new_ids = self.shuffled_ids[_slice]
+		new_ids = self.shuffled_ids[_start:_end]
 
 		self.free_spot += len(new_ids)
 		self.S_current_size += len(new_ids)
 
 		return new_ids
 
-	def _get_shuffled_ids(m):
-		ids = np.arange(m, dtype=int)
+	def _get_shuffled_ids(self):
+		ids = np.arange(self.m, dtype=int)
 		self._random.shuffle(ids)
 		return ids
 
 	def _get_batch_size(self):
-		batch_size = np.ceil(self.relative_size * self.m)
+		batch_size = np.ceil(self.batch_relative_size * self.m)
 		batch_size = int(batch_size)
-		batch_size = min(batch_size, m)
+		batch_size = min(batch_size, self.m)
 		return batch_size
 
 	def _get_S_max_size(self):
