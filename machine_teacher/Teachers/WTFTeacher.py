@@ -69,7 +69,6 @@ class WTFTeacher(GenericTeacher.Teacher):
 
 		return new_ids	
 
-
 	def _get_delta_h(self, h):
 		delta_h = self._get_wrong_labels_id(h)
 		delta_h = [example_id for example_id in delta_h if not self.selected[example_id]] #analisar se cabe melhoria com setdiff1d
