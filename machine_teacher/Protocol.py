@@ -22,7 +22,7 @@ class _TeachResult:
 		self.teacher_log = teacher_log
 
 	def __str__(self):
-		s1 = "sample size = {}".format(len(S_ids))
+		s1 = "sample size = {}".format(len(self.S_ids))
 		s2 = "num_iters = {}".format(self.num_iters)
 		s3 = str(self.timer)
 		return '\n'.join((s1,s2,s3))
@@ -35,7 +35,7 @@ def teach(T: Teacher, L: Learner,
 
 	# wrappers
 	X = wrapp_input_space(X)
-	X_labels = wrapp_labels(X_labels) # reshape to 1d array if needed
+	X_labels = wrapp_labels(X_labels)
 
 	S_ids = np.array([], dtype=int)
 
