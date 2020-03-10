@@ -4,10 +4,14 @@ import numpy as np
 
 # numpy convetions
 _ROW_AXIS = 0
+_FRAC_START = 0.01
+_FRAC_STOP = 0.5
+_SEED = 0
 
 class WTFTeacher(GenericTeacher.Teacher):
-	def __init__(frac_start: float = 0.01, frac_stop: float = 0.5,
-		seed: int = 0):
+	def __init__(self, frac_start: float = _FRAC_START,
+		frac_stop: float = _FRAC_STOP,
+		seed: int = _SEED):
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
 		self.seed = seed
@@ -16,12 +20,10 @@ class WTFTeacher(GenericTeacher.Teacher):
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
 	def start(self, X, y) -> None:
-		self.X = X
-		self.y = y
+		super()._start(X, y)
 
 		m = X.shape[_ROW_AXIS] # number of rows
 		self.m = m
-		self.ids = np.arange(m)
 		self.S_max_size = int(m * self.frac_stop)
 		self.first_batch_size = int(m * self.frac_start)
 		self.num_iters = 0
@@ -31,45 +33,41 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.samples = []
 		self.n = 1
 		self.classes = np.unique(self.y)
-
-		# double checks
-		qtd_rows_X = X.shape[_ROW_AXIS]
-		qtd_rows_y = y.shape[_ROW_AXIS]
-		assert qtd_rows_X == qtd_rows_y
+		self.S_current_size = 0
 
 	def keep_going(self, h) -> bool:
 		if len(self._get_delta_h(h)) == 0:
 			return False
-		elif len(self.S) >= self.S_max_size:
+		elif self.S_current_size >= self.S_max_size:
 			return False
 		else:
 			return True
 
 	def get_first_examples(self):
 		new_ids = get_first_examples(self.frac_start, self.m,
-			self.classes, self._random.shuffle)
+			self.classes, self.y, self._random.shuffle)
 		new_ids = np.array(new_ids)
 		self.selected[new_ids] = True
 		return new_ids
 
 	def get_new_examples(self, h):
 		self.num_iters += 1
+		wrong_labels = self._get_wrong_labels_id(h)
+		
+		new_ids = []
+		while new_ids == []:
+			new_w = self._get_new_weights(wrong_labels)
+			delta_w = (new_w - self.w)/2
+			new_ids = self._select_examples(wrong_labels,
+				delta_w[wrong_labels]) #cabe melhoria
 
-		if self.num_iters == 1:
-			n = self.S_first_batch_size
-			selected_ids = self._random.choice(self.ids, n,	replace=False) # precisa ser estratificado
-		else:
-			wrong_labels = self._get_wrong_labels_id(h)
-			S = []
-			while S is not None:
-				new_w = self._get_new_weights(wrong_labels)
-				delta_w = (new_w - self.w[x])/2
-				S = self._select_examples(wrong_labels, delta_w[wrong_labels]) #cabe melhoria
+		new_ids = np.array(new_ids)
 
-			selected_ids = np.array(S)
+		# updates
+		self.S_current_size += len(new_ids)
+		self.selected[new_ids] = True
 
-		self.selected[selected_ids] = True
-		return selected_ids	
+		return new_ids	
 
 
 	def _get_delta_h(self, h):
@@ -119,8 +117,5 @@ class WTFTeacher(GenericTeacher.Teacher):
 			else:
 				i+=1
 				flag = True
-		
-		if len(S)==0:
-			S = None
 		
 		return S

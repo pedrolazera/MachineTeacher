@@ -1,6 +1,7 @@
 from .. import GenericTeacher
 from ..Utils.Sampler import get_first_examples
 import numpy as np
+import warnings
 
 _FRAC_START = 0.01
 _FRAC_STOP = 0.2
@@ -38,6 +39,7 @@ class PacTeacher(GenericTeacher.Teacher):
 			return True
 
 	def get_first_examples(self):
+		warnings.warn("gambiarra temporaria para o shuffle", Warning)
 		_gambiarra_tmp_shuffle = np.random.RandomState(self.seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
 			self.classes, self.y, _gambiarra_tmp_shuffle)

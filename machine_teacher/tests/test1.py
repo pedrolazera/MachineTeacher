@@ -12,9 +12,9 @@ class BasicTest1(unittest.TestCase):
 class LinRegTest(unittest.TestCase):
 	def test_linear_regressor(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = machine_teacher.Learners.LinearRegressionLearner()
-		L1.fit(X,y)
-		h = L1.predict(X)
+		L = machine_teacher.Learners.LinearRegressionLearner()
+		L.fit(X,y)
+		h = L.predict(X)
 		print("MSE =", _get_erro(y,h))
 		#print(L1.model.coef_)
 		return True
@@ -22,19 +22,19 @@ class LinRegTest(unittest.TestCase):
 class RandomTeacherTest(unittest.TestCase):
 	def test_random_teacher_1(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = machine_teacher.Learners.LinearRegressionLearner()
+		L = machine_teacher.Learners.LinearRegressionLearner()
 		#T1 = machine_teacher.RandomTeacher(1,10)
-		T1 = machine_teacher.Teachers.RandomTeacher(0, 1.0, 1)
-		res = machine_teacher.teach(T1,L1,X,y)
+		T = machine_teacher.Teachers.RandomTeacher(0, 1.0, 1)
+		res = machine_teacher.teach(T,L,X,y)
 		_print(X, y, res)
 		return True
 
 	def test_random_teacher_2(self):
 		X, y = load_boston(return_X_y=True)
-		L1 = machine_teacher.Learners.LinearRegressionLearner()
-		#T1 = machine_teacher.RandomTeacher(1,506)
-		T1 = machine_teacher.Teachers.RandomTeacher(0, 0.25, 4)
-		res = machine_teacher.teach(T1,L1,X,y)
+		L = machine_teacher.Learners.LinearRegressionLearner()
+		#T = machine_teacher.RandomTeacher(1,506)
+		T = machine_teacher.Teachers.RandomTeacher(0, 0.25, 4)
+		res = machine_teacher.teach(T,L,X,y)
 		_print(X, y, res)
 		return True
 
@@ -46,6 +46,13 @@ class RandomTeacherTest(unittest.TestCase):
 		_print(X, y, res)
 		return True
 
+class WTFTeacherTest(unittest.TestCase):
+	def test_wtf_techer_1(self):
+		X, y = load_iris(return_X_y=True)
+		L = machine_teacher.Learners.RandomForestLearner(random_state=0)
+		T = machine_teacher.Teachers.WTFTeacher(0.02, 0.5, 0)
+		res = machine_teacher.teach(T,L,X,y)
+		return True
 
 def _get_erro(y1, y2):
 	assert y1.size == y2.size, "y1 and y2 should have the same size"
