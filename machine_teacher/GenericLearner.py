@@ -7,6 +7,8 @@ from .Definitions import join_input_spaces
 from .Definitions import join_labels
 
 class Learner:
+	name = "GenericLearner"
+	
 	def __init__(self):
 		self.X = None
 		self.y = None

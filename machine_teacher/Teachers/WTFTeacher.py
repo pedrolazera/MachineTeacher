@@ -1,5 +1,6 @@
 from .. import GenericTeacher
 from ..Utils.Sampler import get_first_examples
+from ..Utils.Sampler import choose_ids
 import numpy as np
 
 # numpy convetions

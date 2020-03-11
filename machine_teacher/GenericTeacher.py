@@ -5,6 +5,8 @@ from .Definitions import InputSpace
 from .Definitions import Labels
 
 class Teacher:
+	name = "GenericTeacher"
+	
 	def start(self, X: InputSpace, y: Labels):
 		raise NotImplementedError
 
@@ -32,7 +34,7 @@ class Teacher:
 		qtd_rows_y = get_qtd_rows(y)
 		assert qtd_rows_X == qtd_rows_X
 
-	def _get_wrong_labels_id(self, y2: Labels):
-		wrong_labels = self.y != y2
+	def _get_wrong_labels_id(self, h: Labels):
+		wrong_labels = self.y != h
 		wrong_labels = wrong_labels.reshape(-1)
 		return self.ids[wrong_labels]

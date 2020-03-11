@@ -29,6 +29,7 @@ class PacTeacher(GenericTeacher.Teacher):
 		self.free_spot = 0
 		self.S_current_size = 0
 		self.classes = np.unique(y)
+		self.num_iters = 0
 		
 	def keep_going(self, h):
 		if self.S_current_size >= self.S_max_size:
@@ -52,6 +53,8 @@ class PacTeacher(GenericTeacher.Teacher):
 		# update size of S
 		self.S_current_size += len(new_ids)
 
+		self.num_iters += 1
+
 		return new_ids
 
 	def get_new_examples(self, h):
@@ -63,8 +66,17 @@ class PacTeacher(GenericTeacher.Teacher):
 
 		self.free_spot += len(new_ids)
 		self.S_current_size += len(new_ids)
+		self.num_iters += 1
 
 		return new_ids
+
+	def get_log_header(self):
+		return ["iter_number", "training_set_size", "accuracy"]
+
+	def get_log_line(self, h):
+		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
+		log_line = [self.num_iters, self.S_current_size, accuracy]
+		return log_line
 
 	def _get_shuffled_ids(self):
 		ids = np.arange(self.m, dtype=int)

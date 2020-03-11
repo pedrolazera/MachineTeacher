@@ -22,3 +22,19 @@ def get_first_examples(prop, m, classes, y, shuffle_function):
 		i+=1
 
 	return new_ids
+
+def choose_ids(population, weights, n):
+	# cria elemento artificial para complementar probabilidade
+	weights_2 = np.append(weights, 1.0 - np.sum(weights))
+	population_2 = np.append(population, len(population))
+	
+	# faz selecao com repeticao
+	new_ids = np.random.choice(population_2, n,
+		replace = True, p = weights_2)
+
+	# retira elemento artificial
+	new_ids = np.unique(new_ids)
+	new_ids = [i for i in new_ids if i != len(population)]
+	new_ids = np.array(new_ids)
+	
+	return new_ids
