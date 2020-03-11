@@ -1,6 +1,6 @@
 import numpy as np
 
-from .Timer import Timer
+from .Utils.Timer import Timer
 
 from .GenericTeacher import Teacher
 from .GenericLearner import Learner
