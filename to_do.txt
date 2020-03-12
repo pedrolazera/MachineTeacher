@@ -1,10 +1,11 @@
 - [OK] adicionar anotações de tipos no Protocol.py (ver PEP 484)
-- adicionar opção de com ou sem reposição no RandomTeacher
-- terminar de codar Teacher WTF
 - [OK] colher estatisticas por iteração
+- [OK] fazer 1o teste: PacTeacher + RandomForest tem que bater com o do projeto antigo
 - conferir a questão de algum teacher específico não se beneficiar com a escolha do conjunto inicial.
  * Estratificado por classe
-- [OK] fazer 1o teste: PacTeacher + RandomForest tem que bater com o do projeto antigo
-- tirar "self.n *= 2" do WTFTeacher._get_new_weights()
-- relatórios: criar relatório resumo (data, nome do learner, nome do teacher, estatisticas do dataset, estatisticas do resultado final de classificacao e treino, tempos)
-- testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
+- [09/mar] tirar "self.n *= 2" do WTFTeacher._get_new_weights()
+- [09/mar] relatórios: criar relatório resumo (data, nome do learner, nome do teacher, estatisticas do dataset, estatisticas do resultado final de classificacao e treino, tempos)
+- [10/mar] testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
+- [11/mar] documentar: documentar funcoes
+- [11/mar] documentar: criar readme para o projeto
+- [11/mar] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
