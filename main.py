@@ -32,8 +32,7 @@ if __name__ == "__main__":
 	frac_start = 0.01
 	frac_stop = 1.0
 	L1 = machine_teacher.Learners.RandomForestLearner(random_state=0)
-	T1 = machine_teacher.Teachers.PacTeacher(seed,
-		batch_relative_size, frac_start, frac_stop)
+	T1 = machine_teacher.Teachers.WTFTeacher(frac_start, frac_stop, seed)
 	res = machine_teacher.teach(T1,L1,X,y)
 	print(res)
 	for row in res.teacher_log:

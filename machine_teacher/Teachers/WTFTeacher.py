@@ -61,6 +61,7 @@ class WTFTeacher(GenericTeacher.Teacher):
 			delta_w = (new_w - self.w)/2
 			new_ids = self._select_examples(wrong_labels,
 				delta_w[wrong_labels]) #cabe melhoria
+			self.w = new_w
 
 		new_ids = np.array(new_ids)
 
@@ -71,11 +72,11 @@ class WTFTeacher(GenericTeacher.Teacher):
 		return new_ids
 
 	def get_log_header(self):
-		return ["iter_number", "training_set_size", "accuracy"]
+		return ["iter_number", "n","training_set_size", "accuracy"]
 
 	def get_log_line(self, h):
 		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
-		log_line = [self.num_iters, self.S_current_size, accuracy]
+		log_line = [self.num_iters, self.n, self.S_current_size, accuracy]
 		return log_line
 
 	def _get_delta_h(self, h):
