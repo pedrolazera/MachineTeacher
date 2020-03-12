@@ -68,7 +68,15 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.S_current_size += len(new_ids)
 		self.selected[new_ids] = True
 
-		return new_ids	
+		return new_ids
+
+	def get_log_header(self):
+		return ["iter_number", "training_set_size", "accuracy"]
+
+	def get_log_line(self, h):
+		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
+		log_line = [self.num_iters, self.S_current_size, accuracy]
+		return log_line
 
 	def _get_delta_h(self, h):
 		delta_h = self._get_wrong_labels_id(h)
