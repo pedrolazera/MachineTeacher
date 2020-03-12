@@ -48,6 +48,7 @@ class WTFTeacher(GenericTeacher.Teacher):
 		new_ids = get_first_examples(self.frac_start, self.m,
 			self.classes, self.y, self._random.shuffle)
 		new_ids = np.array(new_ids)
+		self.S_current_size += len(new_ids)
 		self.selected[new_ids] = True
 		return new_ids
 
@@ -58,10 +59,13 @@ class WTFTeacher(GenericTeacher.Teacher):
 		new_ids = []
 		while new_ids == []:
 			new_w = self._get_new_weights(wrong_labels)
-			delta_w = (new_w - self.w)/2
-			new_ids = self._select_examples(wrong_labels,
-				delta_w[wrong_labels]) #cabe melhoria
+			delta_w = (new_w[wrong_labels] - self.w[wrong_labels])/2.0
 			self.w = new_w
+			new_ids = self._select_examples(wrong_labels, delta_w) #cabe melhoria
+			if new_ids == []:
+				self.n *= 2
+				new_w.fill(1/(2*self.m))
+			
 
 		new_ids = np.array(new_ids)
 
@@ -128,3 +132,4 @@ class WTFTeacher(GenericTeacher.Teacher):
 				flag = True
 		
 		return S
+		
