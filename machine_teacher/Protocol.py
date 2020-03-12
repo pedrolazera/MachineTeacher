@@ -28,7 +28,8 @@ class _TeachResult:
 		return '\n'.join((s1,s2,s3))
 
 def teach(T: Teacher, L: Learner,
-	X: InputSpace, X_labels: Labels) -> _TeachResult:
+	X: InputSpace, X_labels: Labels,
+	verbose = False) -> _TeachResult:
 	timer = Timer()
 	timer.start()
 	teacher_log = [T.get_log_header()]
@@ -49,7 +50,8 @@ def teach(T: Teacher, L: Learner,
 	timer.tock()
 
 	S_ids = np.append(S_ids, new_ids)
-	h = _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
+	h = _run_one_round(T, L, X, X_labels, new_ids,
+		timer, teacher_log, verbose)
 	
 	num_iters = 1
 	while T.keep_going(h):
@@ -60,7 +62,8 @@ def teach(T: Teacher, L: Learner,
 		timer.tock()
 
 		S_ids = np.append(S_ids, new_ids)
-		h = _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log)
+		h = _run_one_round(T, L, X, X_labels, new_ids,
+			timer, teacher_log, verbose)
 
 	timer.finish()
 
@@ -68,7 +71,8 @@ def teach(T: Teacher, L: Learner,
 
 	return _TeachResult(S_ids, h, timer, num_iters, teacher_log)
 
-def _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log):
+def _run_one_round(T, L, X, X_labels, new_ids,
+	timer, teacher_log, verbose):
 	# update input subspace S and respective labels S_labels
 	timer.tick("build training set and labels for new examples")
 	S_i = X[new_ids]
@@ -95,5 +99,9 @@ def _run_one_round(T, L, X, X_labels, new_ids, timer, teacher_log):
 	# double checks
 	assert len(h) == len(X_labels)
 	assert get_qtd_columns(S_i) == get_qtd_columns(X)
+
+	# verbose
+	if verbose:
+		print(_teacher_log_line)
 
 	return h

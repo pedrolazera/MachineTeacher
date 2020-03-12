@@ -68,8 +68,6 @@ class PacTeacher(GenericTeacher.Teacher):
 		self.S_current_size += len(new_ids)
 		self.num_iters += 1
 
-		print("tmp", self.num_iters, self.S_current_size)
-
 		return new_ids
 
 	def get_log_header(self):

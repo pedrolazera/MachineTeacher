@@ -63,8 +63,6 @@ def _print(X, y, res):
 	print("MSE =", _get_erro(y, res.h))
 	print("----------")
 	print(res)
-	print("----------")
-	print("len(X) =", X.shape[0])
 		
 
 if __name__ == "__main__":
