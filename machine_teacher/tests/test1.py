@@ -47,7 +47,7 @@ class RandomTeacherTest(unittest.TestCase):
 		return True
 
 class WTFTeacherTest(unittest.TestCase):
-	def test_wtf_techer_1(self):
+	def _test_wtf_techer_1(self):
 		X, y = load_iris(return_X_y=True)
 		L = machine_teacher.Learners.RandomForestLearner(random_state=0)
 		T = machine_teacher.Teachers.WTFTeacher(0.02, 0.5, 0)
