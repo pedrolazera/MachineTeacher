@@ -30,11 +30,12 @@ class PacTeacher(GenericTeacher.Teacher):
 		self.S_current_size = 0
 		self.classes = np.unique(y)
 		self.num_iters = 0
+		self.selected = np.full(self.m, False)
 		
 	def keep_going(self, h):
 		if self.S_current_size >= self.S_max_size:
 			return False
-		elif len(self._get_wrong_labels_id(h)) == 0: # delta_h = {}
+		elif len(self.get_wrong_and_unselected_labels_id(h)) == 0: # delta_h = {}
 			return False
 		else:
 			return True
@@ -50,12 +51,7 @@ class PacTeacher(GenericTeacher.Teacher):
 		_new_ids = set(new_ids)
 		self.shuffled_ids = [i for i in self.shuffled_ids if i not in _new_ids]
 
-		# update size of S
-		self.S_current_size += len(new_ids)
-
-		self.num_iters += 1
-
-		return new_ids
+		return self._send_new_ids(new_ids)
 
 	def get_new_examples(self, h):
 		# build slice
@@ -63,11 +59,20 @@ class PacTeacher(GenericTeacher.Teacher):
 		_batch_size = min(self.batch_size, self.S_max_size - self.S_current_size)
 		_end = min(self.free_spot + _batch_size, self.m)
 		new_ids = self.shuffled_ids[_start:_end]
-
 		self.free_spot += len(new_ids)
-		self.S_current_size += len(new_ids)
-		self.num_iters += 1
+		return self._send_new_ids(new_ids)
 
+	def get_wrong_and_unselected_labels_id(self, h):
+		wrong_labels_id = self._get_wrong_labels_id(h)
+		unselected = [i for i in wrong_labels_id if not self.selected[i]]
+		return unselected
+
+	def _send_new_ids(self, new_ids):
+		# updates
+		self.num_iters += 1
+		self.S_current_size += len(new_ids)
+		self.selected[new_ids] = True
+		
 		return new_ids
 
 	def get_log_header(self):
