@@ -12,9 +12,9 @@ from .Definitions import wrapp_input_space
 from .Definitions import get_qtd_columns
 from .Definitions import get_qtd_rows
 
-class _TeachResult:
-	def __init__(self, S_ids, h, timer,
-		num_iters, teacher_log):
+class TeachResult:
+	def __init__(self, S_ids, h: Labels, timer,
+		num_iters: int, teacher_log):
 		self.S_ids = S_ids
 		self.h = h
 		self.timer = timer
@@ -29,7 +29,7 @@ class _TeachResult:
 
 def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels,
-	verbose = False) -> _TeachResult:
+	verbose = False) -> TeachResult:
 	timer = Timer()
 	timer.start()
 	teacher_log = [T.get_log_header()]
@@ -69,7 +69,7 @@ def teach(T: Teacher, L: Learner,
 
 	assert num_iters+1 == len(teacher_log)
 
-	return _TeachResult(S_ids, h, timer, num_iters, teacher_log)
+	return TeachResult(S_ids, h, timer, num_iters, teacher_log)
 
 def _run_one_round(T, L, X, X_labels, new_ids,
 	timer, teacher_log, verbose):
