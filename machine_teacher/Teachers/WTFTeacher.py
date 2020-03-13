@@ -2,6 +2,7 @@ from .. import GenericTeacher
 from ..Utils.Sampler import get_first_examples
 from ..Utils.Sampler import choose_ids
 import numpy as np
+import warnings
 
 # numpy convetions
 _ROW_AXIS = 0
@@ -10,9 +11,9 @@ _FRAC_STOP = 0.5
 _SEED = 0
 
 class WTFTeacher(GenericTeacher.Teacher):
-	def __init__(self, frac_start: float = _FRAC_START,
-		frac_stop: float = _FRAC_STOP,
-		seed: int = _SEED):
+	def __init__(self, seed: int = _SEED,
+		frac_start: float = _FRAC_START,
+		frac_stop: float = _FRAC_STOP):
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
 		self.seed = seed
@@ -45,54 +46,47 @@ class WTFTeacher(GenericTeacher.Teacher):
 			return True
 
 	def get_first_examples(self):
+		warnings.warn("gambiarra temporaria para o shuffle", Warning)
+		_gambiarra_tmp_shuffle = np.random.RandomState(self.seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
-			self.classes, self.y, self._random.shuffle)
+			self.classes, self.y, _gambiarra_tmp_shuffle)
 		new_ids = np.array(new_ids)
-		self.S_current_size += len(new_ids)
-		self.selected[new_ids] = True
-		return new_ids
+		return self._send_new_ids(new_ids)
 
 	def get_new_examples(self, h):
-		self.num_iters += 1
-		wrong_labels = self._get_wrong_labels_id(h)
+		wrong_labels = self._get_delta_h(h)
 		
 		new_ids = []
 		while new_ids == []:
-			new_w = self._get_new_weights(wrong_labels)
-			delta_w = (new_w[wrong_labels] - self.w[wrong_labels])/2.0
+			new_w, delta_w = self._get_new_weights_and_delta_w(wrong_labels)
 			self.w = new_w
 			new_ids = self._select_examples(wrong_labels, delta_w) #cabe melhoria
 			if new_ids == []:
 				self.n *= 2
 				new_w.fill(1/(2*self.m))
-			
 
 		new_ids = np.array(new_ids)
+		if self.S_current_size + len(new_ids) > self.S_max_size:
+			size = self.S_max_size - self.S_current_size
+			new_ids = new_ids[:size]
 
+		return self._send_new_ids(new_ids)
+
+	def _send_new_ids(self, new_ids):
 		# updates
+		self.num_iters += 1
 		self.S_current_size += len(new_ids)
 		self.selected[new_ids] = True
-
+		
 		return new_ids
-
-	def get_log_header(self):
-		return ["iter_number", "n","training_set_size", "accuracy"]
-
-	def get_log_line(self, h):
-		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
-		log_line = [self.num_iters, self.n, self.S_current_size, accuracy]
-		return log_line
 
 	def _get_delta_h(self, h):
 		delta_h = self._get_wrong_labels_id(h)
-		delta_h = [example_id for example_id in delta_h if not self.selected[example_id]] #analisar se cabe melhoria com setdiff1d
+		delta_h = [i for i in delta_h if not self.selected[i]] #analisar se cabe melhoria com setdiff1d
+		delta_h = np.array(delta_h)
 		return delta_h
 
-	def _restart_wights(self):
-		self.n *= 2
-		self.w.fill(1/(2*self.m))
-
-	def _get_new_weights(self, wrong_labels):
+	def _get_new_weights_and_delta_w(self, wrong_labels):
 		new_w = np.copy(self.w)
 		v = np.sum(new_w[wrong_labels])
 
@@ -105,12 +99,15 @@ class WTFTeacher(GenericTeacher.Teacher):
 		while v*k < 1.0:
 			k = k*2
 
+		old_w = np.copy(new_w[wrong_labels])
 		new_w[wrong_labels] *= k
-		return new_w
+		delta_w = (new_w[wrong_labels] - old_w)/2
+		return (new_w, delta_w)
 
 	def _select_examples(self, wrong_labels, delta_w):
 		random_numbers = self._random.rand(self.n)
 		random_numbers = np.sort(random_numbers)
+
 		j = 0
 		i = 0
 		aux = 0
@@ -133,3 +130,10 @@ class WTFTeacher(GenericTeacher.Teacher):
 		
 		return S
 		
+	def get_log_header(self):
+		return ["iter_number", "n", "training_set_size", "accuracy"]
+
+	def get_log_line(self, h):
+		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
+		log_line = [self.num_iters, self.n, self.S_current_size, accuracy]
+		return log_line

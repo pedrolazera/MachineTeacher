@@ -4,7 +4,8 @@ import numpy as np
 class RandomTeacher(GenericTeacher.Teacher):
 	_MAX_ITERS = 1000
 
-	def __init__(self, seed, batch_relative_size, max_iters):
+	def __init__(self, seed: int, batch_relative_size: float,
+		max_iters: int):
 		self.max_iters = max_iters
 		self.batch_relative_size = batch_relative_size
 		self.seed = seed

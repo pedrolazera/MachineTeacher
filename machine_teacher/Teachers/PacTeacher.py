@@ -7,9 +7,9 @@ _FRAC_START = 0.01
 _FRAC_STOP = 0.2
 
 class PacTeacher(GenericTeacher.Teacher):
-	def __init__(self, seed, batch_relative_size,
-		frac_start=_FRAC_START,
-		frac_stop=_FRAC_STOP):
+	def __init__(self, seed: int, batch_relative_size: float,
+		frac_start: float = _FRAC_START,
+		frac_stop: float = _FRAC_STOP):
 		self.seed = seed
 		self.batch_relative_size = batch_relative_size
 		self.frac_start = frac_start
