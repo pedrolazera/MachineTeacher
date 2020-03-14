@@ -11,12 +11,14 @@ _FRAC_STOP = 0.5
 _SEED = 0
 
 class WTFTeacher(GenericTeacher.Teacher):
+	name = "WTFTeacher"
+	
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		frac_stop: float = _FRAC_STOP):
+		self.seed = seed
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
-		self.seed = seed
 		
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
@@ -137,3 +139,10 @@ class WTFTeacher(GenericTeacher.Teacher):
 		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
 		log_line = [self.num_iters, self.n, self.S_current_size, accuracy]
 		return log_line
+
+	def get_params(self):
+		return {
+			"seed": self.seed, 
+			"frac_start": self.frac_start,
+			"frac_stop": self.frac_stop,
+		}

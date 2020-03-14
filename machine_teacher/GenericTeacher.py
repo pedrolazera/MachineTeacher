@@ -25,6 +25,9 @@ class Teacher:
 	def get_log_line(self, h: Labels):
 		return []
 
+	def get_params(self) -> dict:
+		return dict()
+
 	def _start(self, X: InputSpace, y: Labels):
 		self.X = X
 		self.y = y

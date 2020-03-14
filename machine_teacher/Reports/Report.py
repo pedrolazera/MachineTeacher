@@ -13,7 +13,7 @@ def create_report_from_configuration_file(src_path: str,
     raise NotImplementedError
 
 def create_report(TR: TeachResult, dest_folder_path: str) -> None:
-    assert os.isdir(dest_folder_path)
+    assert os.path.isdir(dest_folder_path)
 
     # seconds since epoch, unique id
     _seconds_since_epoch = int(time.time())
@@ -33,17 +33,17 @@ def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     teacher_log_file_name = "teacher_log{}.csv".format(_seconds_since_epoch)
     teacher_log_file_pat = os.path.join(new_folder_path,
         teacher_log_file_name)
-    _convert_teacher_log_to_csv(TR, teacher_log_file_pat)
+    _convert_teacher_log_to_csv(TR.teacher_log, teacher_log_file_pat)
 
 def _convert_teacher_log_to_csv(log, path: str):
-    assert os.isdir(os.dirname(path))
+    assert os.path.isdir(os.path.dirname(path))
 
     with open(path, "w", newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerows(log)
 
 def _convert_teach_result_to_txt(TR: TeachResult, path: str):
-    assert os.isdir(os.dirname(path))
+    assert os.path.isdir(os.path.dirname(path))
 
     with open(path, "w") as fp:
         fp.write(str(TR))

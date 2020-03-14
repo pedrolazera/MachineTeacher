@@ -7,6 +7,8 @@ _FRAC_START = 0.01
 _FRAC_STOP = 0.2
 
 class PacTeacher(GenericTeacher.Teacher):
+	name = "PacTeacher"
+	
 	def __init__(self, seed: int, batch_relative_size: float,
 		frac_start: float = _FRAC_START,
 		frac_stop: float = _FRAC_STOP):
@@ -97,6 +99,14 @@ class PacTeacher(GenericTeacher.Teacher):
 	def _get_S_max_size(self):
 		S_max_size = int(self.m*self.frac_stop)
 		return S_max_size
+
+	def get_params(self):
+		return {
+			"seed": self.seed,
+			"batch_relative_size": self.batch_relative_size, 
+			"frac_start": self.frac_start,
+			"frac_stop": self.frac_stop,
+		}
 
 
 

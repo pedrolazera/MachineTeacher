@@ -3,6 +3,8 @@ from sklearn.linear_model import LogisticRegression
 import numpy as np
 
 class LogisticRegressionLearner(GenericLearner.Learner):
+	name = "LogisticRegressionLearner"
+	
 	def __init__(self, *args, **kwargs):
 		self.model = LogisticRegression(*args, **kwargs)
 		super().__init__()
@@ -17,3 +19,6 @@ class LogisticRegressionLearner(GenericLearner.Learner):
 
 	def get_h0(self, X):
 		return super()._get_h0(X)
+
+	def get_params(self):
+		return self.model.get_params()

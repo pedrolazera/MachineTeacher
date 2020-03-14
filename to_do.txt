@@ -9,3 +9,4 @@
 - [11/mar] documentar: documentar funcoes
 - [11/mar] documentar: criar readme para o projeto
 - [OK] [11/mar] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
+- [14/mar] summary: colocar data no summary do experimento

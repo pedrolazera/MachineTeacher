@@ -37,3 +37,6 @@ class Learner:
 			self.y = yi
 		else:
 			self.y = join_labels(self.y, yi)
+
+	def get_params(self) -> dict:
+		return dict()

@@ -2,6 +2,7 @@ import configparser
 
 def read_configuration_file(path: str):
     raise NotImplementedError
+    
     config = configparser.ConfigParser()
     config.read(path)
 

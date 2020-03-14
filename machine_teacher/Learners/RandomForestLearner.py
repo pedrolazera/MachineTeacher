@@ -3,6 +3,8 @@ from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
 class RandomForestLearner(GenericLearner.Learner):
+	name = "RandomForestLearner"
+
 	def __init__(self, *args, **kwargs):
 		self.model = RandomForestClassifier(*args, **kwargs)
 		super().__init__()
@@ -17,3 +19,6 @@ class RandomForestLearner(GenericLearner.Learner):
 
 	def get_h0(self, X):
 		return super()._get_h0(X)
+
+	def get_params(self):
+		return self.model.get_params()

@@ -2,13 +2,14 @@ from .. import GenericTeacher
 import numpy as np
 
 class RandomTeacher(GenericTeacher.Teacher):
+	name = "RandomTeacher"
 	_MAX_ITERS = 1000
 
 	def __init__(self, seed: int, batch_relative_size: float,
 		max_iters: int):
+		self.seed = seed
 		self.max_iters = max_iters
 		self.batch_relative_size = batch_relative_size
-		self.seed = seed
 
 		assert 0 < batch_relative_size <= 1.0
 
@@ -55,6 +56,13 @@ class RandomTeacher(GenericTeacher.Teacher):
 		wrong_labels_id = [i for i in wrong_labels_id if not self.selected[i]]
 		wrong_labels_id = np.array(wrong_labels_id)
 		return wrong_labels_id
+
+	def get_params(self):
+		return {
+			"seed": self.seed,
+			"max_iters": self.max_iters,
+			"batch_relative_size": self.batch_relative_size
+		}
 
 	@staticmethod
 	def _get_batch_size(m, relative_size):
