@@ -8,5 +8,6 @@
 - [10/mar] testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
 - [11/mar] documentar: documentar funcoes
 - [11/mar] documentar: criar readme para o projeto
-- [OK] [11/mar] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
-- [14/mar] summary: colocar data no summary do experimento
+- [11/mar] [OK] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
+- [14/mar] [OK] summary: colocar data no summary do experimento
+- [14/mar] testes: pensar em experimentos que fazem o mesmo teste N vezes. Ideia: somar teacher results! somar timers!

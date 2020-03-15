@@ -2,6 +2,7 @@ import numpy as np
 from datetime import datetime
 
 from .Utils.Timer import Timer
+from .Utils.TeachResult import TeachResult
 
 from .GenericTeacher import Teacher
 from .GenericLearner import Learner
@@ -13,58 +14,9 @@ from .Definitions import wrapp_input_space
 from .Definitions import get_qtd_columns
 from .Definitions import get_qtd_rows
 
-_DATASET_STD_NAME = "???"
-
-class TeachResult:
-	_DT_FORMAT = "%Y-%m-%d %H:%M"
-	def __init__(self, T: Teacher, L: Learner,
-		S_ids, h: Labels, timer: Timer,
-		num_iters: int,
-		teacher_log,
-		dataset_name: str = _DATASET_STD_NAME):
-
-		# output
-		self.S_ids = S_ids
-		self.h = h
-		self.timer = timer
-		self.num_iters = num_iters
-
-		# teacher
-		self.teacher_log = teacher_log
-		self.teacher_name = T.name
-		self.teacher_params = T.get_params()
-
-		# learner
-		self.learner_name = L.name
-		self.learner_params = L.get_params()
-
-		# other stuff
-		self.date = datetime.today().strftime(self._DT_FORMAT)
-		self.dataset_name = dataset_name
-
-	def __str__(self):
-		s0 = "-- summary"
-		s1 = "date: {}".format(self.date)
-		s2 = "teacher: {}".format(self.teacher_name)
-		s3 = "learner: {}".format(self.learner_name)
-		s4 = "dataset: {}".format(self.dataset_name)
-		s5 = "sample size: {}".format(len(self.S_ids))
-		s6 = "num_iters: {}".format(self.num_iters)
-
-		s7 = "\n-- times (in seconds)"
-		s8 = str(self.timer)
-		
-		s9 = "\n-- teacher parameters"
-		s10 = "\n".join("{}: {}".format(a,b) for (a,b) in self.teacher_params.items())
-
-		s11 = "\n-- learner parameters"
-		s12 = "\n".join("{}: {}".format(a,b) for (a,b) in self.learner_params.items())
-
-		return '\n'.join((s0,s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12))		
-
 def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels,
-	dataset_name = _DATASET_STD_NAME) -> TeachResult:
+	dataset_name = TeachResult._DATASET_STD_NAME) -> TeachResult:
 	timer = Timer()
 	timer.start()
 	teacher_log = [T.get_log_header()]
@@ -76,6 +28,7 @@ def teach(T: Teacher, L: Learner,
 	S_ids = np.array([], dtype=int)
 
 	timer.tick("preprocess")
+	L.start()
 	T.start(X, X_labels)
 	timer.tock()
 

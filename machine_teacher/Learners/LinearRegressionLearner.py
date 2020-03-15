@@ -6,8 +6,12 @@ class LinearRegressionLearner(GenericLearner.Learner):
 	name = "LinearRegressionLearner"
 
 	def __init__(self, *args, **kwargs):
-		self.model = LinearRegression(*args, **kwargs)
-		super().__init__()
+		self.args = args
+		self.kwargs = kwargs
+
+	def start(self):
+		self.model = LinearRegression(*self.args, **self.kwargs)
+		super().start()
 
 	def fit(self, Xi, yi):
 		self.update_X(Xi)

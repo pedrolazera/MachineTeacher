@@ -4,10 +4,14 @@ import numpy as np
 
 class LogisticRegressionLearner(GenericLearner.Learner):
 	name = "LogisticRegressionLearner"
-	
+
 	def __init__(self, *args, **kwargs):
-		self.model = LogisticRegression(*args, **kwargs)
-		super().__init__()
+		self.args = args
+		self.kwargs = kwargs
+
+	def start(self):
+		self.model = LogisticRegression(*self.args, **self.kwargs)
+		super().start()
 
 	def fit(self, Xi, yi):
 		self.update_X(Xi)

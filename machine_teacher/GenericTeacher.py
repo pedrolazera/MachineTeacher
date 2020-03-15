@@ -41,3 +41,8 @@ class Teacher:
 		wrong_labels = self.y != h
 		wrong_labels = wrong_labels.reshape(-1)
 		return self.ids[wrong_labels]
+
+	def _get_accuracy(self, h):
+		wrong_labels = self._get_wrong_labels_id(h)
+		accuracy = 1 - len(wrong_labels) / len(self.y)
+		return accuracy

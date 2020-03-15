@@ -6,8 +6,12 @@ class RandomForestLearner(GenericLearner.Learner):
 	name = "RandomForestLearner"
 
 	def __init__(self, *args, **kwargs):
-		self.model = RandomForestClassifier(*args, **kwargs)
-		super().__init__()
+		self.args = args
+		self.kwargs = kwargs
+
+	def start(self):
+		self.model = RandomForestClassifier(*self.args, **self.kwargs)
+		super().start()
 
 	def fit(self, Xi, yi):
 		self.update_X(Xi)

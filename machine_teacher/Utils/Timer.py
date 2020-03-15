@@ -56,3 +56,33 @@ class Timer:
 		v_values = [self.total_time] + d_values + [self.others_time]
 		s = '\n'.join('{} = {:.2f}'.format(n,v) for (n,v) in zip(v_names, v_values))
 		return s
+
+	def __add__(self, other):
+		keys1 = list(self._d.keys())
+		keys2 = list(other._d.keys())
+		assert keys1 == keys2
+
+		_d = dict()
+		for k in keys1: # or keys2, whatever
+			_d[k] = self._d[k] + other._d[k]
+
+		total_time = self.total_time + other.total_time
+		others_time = self.others_time + other.others_time
+
+		new_timer = Timer()
+		new_timer._d = _d
+		new_timer.total_time = total_time
+		new_timer.others_time = others_time
+
+		return new_timer
+
+	def __mul__(self, alpha):
+		new_timer = Timer()
+
+		for k in self._d.keys():
+			new_timer._d[k] = self._d[k] * alpha
+
+		new_timer.total_time = self.total_time * alpha
+		new_timer.others_time = self.others_time * alpha
+
+		return new_timer

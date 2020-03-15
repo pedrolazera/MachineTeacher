@@ -32,7 +32,7 @@ class RandomTeacher(GenericTeacher.Teacher):
 
 	def get_new_examples(self, h):
 		self.iters += 1
-		wrong_labels = self._get_wrong_labels_id(h)
+		wrong_labels = self.get_wrong_and_unselected_labels_id(h)
 
 		assert wrong_labels.size > 0
 
@@ -49,13 +49,11 @@ class RandomTeacher(GenericTeacher.Teacher):
 	def _update_selected_ids(self, new_ids):
 		self.selected[new_ids] = True
 
-	def _get_wrong_labels_id(self, h):
-		wrong_labels_id = super()._get_wrong_labels_id(h)
-
-		# elimina ids que ja escolhidos anteriormente
-		wrong_labels_id = [i for i in wrong_labels_id if not self.selected[i]]
-		wrong_labels_id = np.array(wrong_labels_id)
-		return wrong_labels_id
+	def get_wrong_and_unselected_labels_id(self, h):
+		wrong_labels_id = self._get_wrong_labels_id(h)
+		unselected = [i for i in wrong_labels_id if not self.selected[i]]
+		unselected = np.array(unselected)
+		return unselected
 
 	def get_params(self):
 		return {

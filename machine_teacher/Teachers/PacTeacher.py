@@ -67,6 +67,7 @@ class PacTeacher(GenericTeacher.Teacher):
 	def get_wrong_and_unselected_labels_id(self, h):
 		wrong_labels_id = self._get_wrong_labels_id(h)
 		unselected = [i for i in wrong_labels_id if not self.selected[i]]
+		unselected = np.array(unselected)
 		return unselected
 
 	def _send_new_ids(self, new_ids):
@@ -78,11 +79,12 @@ class PacTeacher(GenericTeacher.Teacher):
 		return new_ids
 
 	def get_log_header(self):
-		return ["iter_number", "training_set_size", "accuracy"]
+		return ["iter_number", "training_set_size",
+			"accuracy", "accuracy do conj. de treino"]
 
 	def get_log_line(self, h):
 		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
-		log_line = [self.num_iters, self.S_current_size, accuracy]
+		log_line = [self.num_iters, self.S_current_size, accuracy, 0.0]
 		return log_line
 
 	def _get_shuffled_ids(self):
