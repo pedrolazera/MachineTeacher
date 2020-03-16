@@ -1,19 +1,37 @@
 import csv
+import os
 from datetime import datetime
 from time import sleep
-import os
 from ..Definitions import InputSpace
 from ..Definitions import Labels
 from ..GenericTeacher import Teacher
 from ..GenericLearner import Learner
-from ..Protocol import TeachResult
+from ..Utils import TeachResult
 from .ConfigurationReader import read_configuration_file
+from ..Protocol import teach
+from ..Utils.TeacherLearnerLoader import get_teacher
+from ..Utils.TeacherLearnerLoader import get_learner
 
 _SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
-def create_report_from_configuration_file(src_path: str,
-    dest_path: str) -> None:
-    raise NotImplementedError
+def create_report_from_configuration_file(src_path: str) -> None:
+    configs = read_configuration_file(src_path)
+
+    TRs = []
+
+    dest_folder_path = configs.dest_folder
+    X, y = _load_dataset_from_path(configs.dataset_path)
+    dataset_name = config.dataset_name
+    for conf in config:
+        T = _get_teacher(conf.teacher_name, conf.teacher_kwargs)
+        L = _get_learner(conf.learner_name, conf.learner_kwargs)
+        TR_i = teach(T, L, X, y, dataset_name)
+        TRs.append(TR_i)
+
+    if len(TRs) == 1:
+        create_report(TRs[0], dest_folder_path)
+    else:
+        create_reports(TRs, dest_folder_path)
 
 def create_reports(v, dest_folder_path: str):
     assert os.path.isdir(dest_folder_path)

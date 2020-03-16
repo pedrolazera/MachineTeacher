@@ -1,9 +1,32 @@
 import configparser
 import json
+from os.path import basename
+from ..Utils.CustomIterator import CustomIterator
 
 _SECTIONS = ('teacher', 'learner', 'dataset', 'destination')
 
-class TestConfiguration:
+class _TestConfiguration:
+	def __init__(self, teacher_name, learner_name, dataset_path,
+		teacher_kwargs, learner_kwargs, dest_folder):
+		self.teacher_name = teacher_name
+		self.learner_name = learner_name
+		self.dataset_path = dataset_path
+		self.dataset_name = basename(dataset_path)
+		self.teacher_kwargs = teacher_kwargs
+		self.learner_kwargs = learner_kwargs
+		self.dest_folder = dest_folder
+
+	def __str__(self):
+		return "\n".join((
+			self.teacher_name,
+			self.learner_name,
+			self.dataset_path,
+			str(self.teacher_kwargs),
+			str(self.learner_kwargs),
+			self.dest_folder
+			))
+
+class _TestConfigurations:
 	def __init__(self, teacher_name, learner_name, dataset_path,
 		teacher_kwargs, learner_kwargs, dest_folder):
 		self.teacher_name = teacher_name
@@ -13,24 +36,83 @@ class TestConfiguration:
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
 
+		self._teacher_params = list(self.teacher_kwargs.keys())
+		self._learner_params = list(self.learner_kwargs.keys())
+
+	def __iter__(self):
+		self._teacher_args_iter = iter(CustomIterator(self._get_v_teacher_limits()))
+		self._learner_args_iter = iter(CustomIterator(self._get_v_learner_limits()))
+		self._v_teacher = next(self._teacher_args_iter)
+
+		return self
+
+	def __next__(self):
+		if self._learner_args_iter.qtd_left() == 0:
+			if self._teacher_args_iter.qtd_left() == 0:
+				raise StopIteration
+			else:
+				self._learner_args_iter = iter(CustomIterator(self._get_v_learner_limits()))
+				self._v_teacher = next(self._teacher_args_iter)
+
+		self._v_learner = next(self._learner_args_iter)
+
+		_d_teacher = self._get_d_teacher(self._v_teacher)
+		_d_learner = self._get_d_learner(self._v_learner)
+
+		return _TestConfiguration(self.teacher_name, self.learner_name,
+			self.dataset_path, _d_teacher, _d_learner, self.dest_folder)
+
+	def _get_v_teacher_limits(self):
+		v = [0] * len(self._teacher_params)
+		for (i, key) in enumerate(self._teacher_params):
+			upper_bound_i = len(self.teacher_kwargs[key]) - 1
+			v[i] = upper_bound_i
+
+		return v
+
+	def _get_v_learner_limits(self):
+		v = [0] * len(self._learner_params)
+		for (i, key) in enumerate(self._learner_params):
+			upper_bound_i = len(self.learner_kwargs[key]) - 1
+			v[i] = upper_bound_i
+
+		return v
+
+	def _get_d_teacher(self, v):
+		assert len(v) == len(self._teacher_params)
+		d = dict()
+		for (i, key) in enumerate(self._teacher_params):
+			j = v[i]
+			value = self.teacher_kwargs[key][j]
+			d[key] = value
+
+		return d
+
+	def _get_d_learner(self, v):
+		assert len(v) == len(self._learner_params)
+		d = dict()
+		for (i, key) in enumerate(self._learner_params):
+			j = v[i]
+			value = self.learner_kwargs[key][j]
+			d[key] = value
+
+		return d
+
 def read_configuration_file(path: str):
-    config = configparser.ConfigParser()
-    config.read(path)
-    #return config
+	config = configparser.ConfigParser()
+	config.read(path)
 
-    #_sections_to_lowercase(config)
+	# some asserts - sections most exist
+	for section_name in _SECTIONS:
+		assert config.has_section(section_name)
 
-    # some asserts - sections most exist
-    for section_name in _SECTIONS:
-    	assert config.has_section(section_name)
+	teacher_name, teacher_kwargs = _parse_teacher_section(config['teacher'])
+	learner_name, learner_kwargs = _parse_learner_section(config['learner'])
+	dataset_path = _parse_string(config['dataset']['path'])
+	dest_folder = _parse_string(config['destination']['path'])
 
-    teacher_name, teacher_kwargs = _parse_teacher_section(config['teacher'])
-    learner_name, learner_kwargs = _parse_learner_section(config['learner'])
-    dataset_path = config['dataset']['path'].strip()
-    dest_folder = config['destination']['path'].strip()
-
-    return TestConfiguration(
-    	teacher_name, learner_name, dataset_path,
+	return _TestConfigurations(
+		teacher_name, learner_name, dataset_path,
 		teacher_kwargs, learner_kwargs, dest_folder
 		)
 
@@ -40,10 +122,10 @@ def _sections_to_lowercase(config):
 		config[section_name.lower()] = config[section_name]
 
 def _parse_teacher_section(section):
-	kwargs = {key: json.loads(value) for (key,value) in dict(section).items()}
+	kwargs = {key: _parse_value(x) for (key,x) in dict(section).items()}
 	assert 'name' in kwargs
 
-	name = kwargs['name']
+	name = _parse_string(section['name'])
 	del kwargs['name']
 
 	return (name, kwargs)
@@ -51,3 +133,27 @@ def _parse_teacher_section(section):
 def _parse_learner_section(section):
 	learner_name, learner_kwargs = _parse_teacher_section(section)
 	return (learner_name, learner_kwargs)
+
+def _parse_value(x):
+	x = json.loads(x)
+
+	bool1 = isinstance(x, int)
+	bool2 = isinstance(x, float)
+	bool3 = isinstance(x, str)
+	bool4 = isinstance(x, list) and all(isinstance(xi, int) for xi in x)
+	bool5 = isinstance(x, list) and all(isinstance(xi, float) for xi in x)
+	bool6 = isinstance(x, list) and all(isinstance(xi, str) for xi in x)
+
+	assert (bool1 or bool2 or bool3 or bool4 or bool5 or bool6)
+
+	# get rid of extra quotes
+	if bool3:
+		x = _parse_string(x)
+
+	if not isinstance(x, list):
+		x = [x]
+	
+	return x
+
+def _parse_string(s):
+	return s.strip().replace("'", "").replace('"', '')
