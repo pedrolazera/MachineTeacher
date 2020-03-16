@@ -86,3 +86,6 @@ class Timer:
 		new_timer.others_time = self.others_time * alpha
 
 		return new_timer
+
+	def __truediv__(self, alpha):
+		return self.__mul__(1/alpha)

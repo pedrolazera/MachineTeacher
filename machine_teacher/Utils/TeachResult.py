@@ -58,15 +58,15 @@ class TeachResult:
 		s8 = "\n-- learner parameters"
 		s9 = "\n".join("{}: {}".format(a,b) for (a,b) in self.learner_params.items())
 
-		return '\n'.join((s0,s1,s2,s3,s4,s5,s6,s7,s8,s9))
+		return '\n'.join((s1,s2,s3,s4,s5,s6,s7,s8,s9))
 
 	def __add__(self, other):
  		new = deepcopy(self)
 
  		# Nones, things that does not make sense anymore
  		new.teacher_log = None
- 		new.teacher_params = None
- 		new.learner_params = None
+ 		new.teacher_params = dict()
+ 		new.learner_params = dict()
  		new.date = None
 
  		# stats
@@ -81,6 +81,10 @@ class TeachResult:
 		new.timer *= alpha
 		return new
 
+	def __truediv__(self, alpha):
+		return self.__mul__(1/alpha)
+
+
 class _MainInfos:
 	def __init__(self, teacher_name: str, learner_name: str,
 		dataset_name: str, total_time: float,
@@ -93,6 +97,16 @@ class _MainInfos:
 		self.sample_size = sample_size
 		self.accuracy = accuracy
 		self.num_iters = num_iters
+
+	@staticmethod
+	def get_header():
+		return ["teacher_name", "learner_name", "dataset_name",
+			"total_time", "num_iters", "sample_size", "accuracy"]
+
+	def get_infos_list(self):
+		return [self.teacher_name, self.learner_name,
+			self.dataset_name, self.total_time, self.num_iters,
+			self.sample_size, self.accuracy]
 
 	def __add__(self, other):
 		assert self.teacher_name == other.teacher_name
@@ -118,15 +132,18 @@ class _MainInfos:
 		
 		return new
 
+	def __truediv__(self, alpha):
+		return self.__mul__(1/alpha)
+
 	def __str__(self):
 		_v = []
 		_v.append("teacher: {}".format(self.teacher_name))
 		_v.append("learner: {}".format(self.learner_name))
 		_v.append("dataset: {}".format(self.dataset_name))
-		_v.append("total_time: {}".format(self.total_time))
+		_v.append("total_time: {:.2f}".format(self.total_time))
 		_v.append("num_iters: {}".format(self.num_iters))
 		_v.append("sample size: {}".format(self.sample_size))
-		_v.append("accuracy: {}".format(self.accuracy))
+		_v.append("accuracy: {:.2f}".format(self.accuracy))
 
 		return "\n".join(_v)
 

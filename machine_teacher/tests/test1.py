@@ -13,6 +13,7 @@ class LinRegTest(unittest.TestCase):
 	def test_linear_regressor(self):
 		X, y = load_boston(return_X_y=True)
 		L = machine_teacher.Learners.LinearRegressionLearner()
+		L.start()
 		L.fit(X,y)
 		h = L.predict(X)
 		print("MSE =", _get_erro(y,h))

@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from time import sleep
 import os
 from ..Definitions import InputSpace
 from ..Definitions import Labels
@@ -8,11 +9,43 @@ from ..GenericLearner import Learner
 from ..Protocol import TeachResult
 from .ConfigurationReader import read_configuration_file
 
-_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S"
+_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
 def create_report_from_configuration_file(src_path: str,
     dest_path: str) -> None:
     raise NotImplementedError
+
+def create_reports(v, dest_folder_path: str):
+    assert os.path.isdir(dest_folder_path)
+
+    _sufix = datetime.today().strftime(_SUFIX_FORMAT)
+
+    # create subfolder
+    new_folder_name = "experiment_set_{}".format(_sufix)
+    new_folder_path = os.path.join(dest_folder_path, new_folder_name)
+    os.mkdir(new_folder_path)
+
+    create_comparison_table_report(v, new_folder_path)
+
+    for teach_result in v:
+        create_report(teach_result, new_folder_path)
+        sleep(0.001) # avoid name colision
+
+def create_comparison_table_report(v,
+    dest_folder_path: str) -> None:
+    # build report
+    header = v[0].main_infos.get_header()
+    report_lines = [header]
+    for teach_result in v:
+        report_lines.append(teach_result.main_infos.get_infos_list())
+
+    file_path = os.path.join(dest_folder_path,
+        "reports_summary.csv")
+
+    # write report
+    with open(file_path, "w", newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerows(report_lines)
 
 def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     assert os.path.isdir(dest_folder_path)
