@@ -1,13 +1,14 @@
 - [OK] adicionar anotações de tipos no Protocol.py (ver PEP 484)
 - [OK] colher estatisticas por iteração
 - [OK] fazer 1o teste: PacTeacher + RandomForest tem que bater com o do projeto antigo
-- [OK] conferir a questão de algum teacher específico não se beneficiar com a escolha do conjunto inicial.
- * Estratificado por classe
+- [OK] conferir a questão de algum teacher específico não se beneficiar com a escolha do conjunto inicial. * Estratificado por classe
+- [OK] [09/mar] relatórios: criar relatório resumo (data, nome do learner, nome do teacher, estatisticas do dataset, estatisticas do resultado final de classificacao e treino, tempos)
+- [OK] [11/mar] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
+- [OK] [14/mar] summary: colocar data no summary do experimento
+
+
 - [09/mar] tirar "self.n *= 2" do WTFTeacher._get_new_weights()
-- [09/mar] relatórios: criar relatório resumo (data, nome do learner, nome do teacher, estatisticas do dataset, estatisticas do resultado final de classificacao e treino, tempos)
 - [10/mar] testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
 - [11/mar] documentar: documentar funcoes
 - [11/mar] documentar: criar readme para o projeto
-- [11/mar] [OK] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
-- [14/mar] [OK] summary: colocar data no summary do experimento
 - [14/mar] testes: pensar em experimentos que fazem o mesmo teste N vezes. Ideia: somar teacher results! somar timers!
