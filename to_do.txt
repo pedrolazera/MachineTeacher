@@ -12,3 +12,4 @@
 - [11/mar] documentar: documentar funcoes
 - [11/mar] documentar: criar readme para o projeto
 - [14/mar] testes: pensar em experimentos que fazem o mesmo teste N vezes. Ideia: somar teacher results! somar timers!
+- [16/mar] arquivo conf: eliminar paths absolutos
