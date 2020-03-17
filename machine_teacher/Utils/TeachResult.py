@@ -140,10 +140,10 @@ class _MainInfos:
 		_v.append("teacher: {}".format(self.teacher_name))
 		_v.append("learner: {}".format(self.learner_name))
 		_v.append("dataset: {}".format(self.dataset_name))
-		_v.append("total_time: {:.2f}".format(self.total_time))
+		_v.append("total_time: {:.3f}".format(self.total_time))
 		_v.append("num_iters: {}".format(self.num_iters))
 		_v.append("sample size: {}".format(self.sample_size))
-		_v.append("accuracy: {:.2f}".format(self.accuracy))
+		_v.append("accuracy: {:.3f}".format(self.accuracy))
 
 		return "\n".join(_v)
 

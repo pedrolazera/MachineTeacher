@@ -54,7 +54,7 @@ class Timer:
 		d_values = [self._d[name] for name in d_names]
 		v_names = ["total_time"] + d_names + ["others_time"]
 		v_values = [self.total_time] + d_values + [self.others_time]
-		s = '\n'.join('{} = {:.2f}'.format(n,v) for (n,v) in zip(v_names, v_values))
+		s = '\n'.join('{} = {:.3f}'.format(n,v) for (n,v) in zip(v_names, v_values))
 		return s
 
 	def __add__(self, other):

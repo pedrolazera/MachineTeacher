@@ -6,11 +6,13 @@ from ..Utils.CustomIterator import CustomIterator
 _SECTIONS = ('teacher', 'learner', 'dataset', 'destination')
 
 class _TestConfiguration:
-	def __init__(self, teacher_name, learner_name, dataset_path,
-		teacher_kwargs, learner_kwargs, dest_folder):
+	def __init__(self, teacher_name: str, learner_name: str,
+		dataset_path: str, dataset_is_numeric: bool,
+		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_path = dataset_path
+		self.dataset_is_numeric = dataset_is_numeric
 		self.dataset_name = basename(dataset_path)
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
@@ -27,11 +29,14 @@ class _TestConfiguration:
 			))
 
 class _TestConfigurations:
-	def __init__(self, teacher_name, learner_name, dataset_path,
-		teacher_kwargs, learner_kwargs, dest_folder):
+	def __init__(self, teacher_name: str, learner_name: str,
+		dataset_path: str, dataset_is_numeric: bool,
+		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_path = dataset_path
+		self.dataset_name = basename(dataset_path)
+		self.dataset_is_numeric = dataset_is_numeric
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
@@ -60,7 +65,8 @@ class _TestConfigurations:
 		_d_learner = self._get_d_learner(self._v_learner)
 
 		return _TestConfiguration(self.teacher_name, self.learner_name,
-			self.dataset_path, _d_teacher, _d_learner, self.dest_folder)
+			self.dataset_path, self.dataset_is_numeric, _d_teacher,
+			_d_learner, self.dest_folder)
 
 	def _get_v_teacher_limits(self):
 		v = [0] * len(self._teacher_params)
@@ -104,15 +110,16 @@ def read_configuration_file(path: str):
 
 	# some asserts - sections most exist
 	for section_name in _SECTIONS:
-		assert config.has_section(section_name)
+		assert config.has_section(section_name), "no section {}".format(section_name)
 
 	teacher_name, teacher_kwargs = _parse_teacher_section(config['teacher'])
 	learner_name, learner_kwargs = _parse_learner_section(config['learner'])
-	dataset_path = _parse_string(config['dataset']['path'])
+	#dataset_path = _parse_string(config['dataset']['path'])
+	dataset_path, is_numeric = _parse_dataset_section(config['dataset'])
 	dest_folder = _parse_string(config['destination']['path'])
 
 	return _TestConfigurations(
-		teacher_name, learner_name, dataset_path,
+		teacher_name, learner_name, dataset_path, is_numeric,
 		teacher_kwargs, learner_kwargs, dest_folder
 		)
 
@@ -122,17 +129,25 @@ def _sections_to_lowercase(config):
 		config[section_name.lower()] = config[section_name]
 
 def _parse_teacher_section(section):
-	kwargs = {key: _parse_value(x) for (key,x) in dict(section).items()}
-	assert 'name' in kwargs
-
+	assert 'name' in section
 	name = _parse_string(section['name'])
-	del kwargs['name']
+
+	kwargs = {key: _parse_value(x) for (key,x) in dict(section).items() if key != "name"}
 
 	return (name, kwargs)
 
 def _parse_learner_section(section):
 	learner_name, learner_kwargs = _parse_teacher_section(section)
 	return (learner_name, learner_kwargs)
+
+def _parse_dataset_section(section):
+	assert 'path' in section
+	assert 'is_numeric' in section
+
+	path = _parse_string(section['path'])
+	is_numeric = _parse_boolean(section['is_numeric'])
+
+	return (path, is_numeric)
 
 def _parse_value(x):
 	x = json.loads(x)
@@ -157,3 +172,12 @@ def _parse_value(x):
 
 def _parse_string(s):
 	return s.strip().replace("'", "").replace('"', '')
+
+def _parse_boolean(s):
+	s = _parse_string(s).lower()
+	if s in ("1", "yes", "on", "true"):
+		return True
+	elif s in ("0", "no", "off", "false"):
+		return False
+	else:
+		raise ValueError

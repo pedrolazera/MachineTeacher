@@ -17,4 +17,4 @@ def get_teacher(teacher_name, args):
 	return _D_TEACHERS[teacher_name](**args)
 
 def get_learner(learner_name, args):
-	return _D_TEACHERS[teacher_name](**args)
+	return _D_LEARNERS[learner_name](**args)
