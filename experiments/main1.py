@@ -11,4 +11,4 @@ dest_folder = os.path.join(".", "results")
 dest_folder = os.path.abspath(dest_folder)
 
 machine_teacher.Reports.create_reports_from_configuration_folder(configuration_folder,
-	dest_folder)
+	dest_folder, True)

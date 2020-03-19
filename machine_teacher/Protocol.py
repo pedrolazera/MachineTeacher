@@ -14,11 +14,17 @@ from .Definitions import wrapp_input_space
 from .Definitions import get_qtd_columns
 from .Definitions import get_qtd_rows
 
+_TIMER_KEYS = (
+	"preprocess", "get first examples", "get examples",
+	"build training set and labels for new examples",
+	"fit", "predict", "build teacher log")
+
 def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels,
 	dataset_name = TeachResult._DATASET_STD_NAME) -> TeachResult:
 	timer = Timer()
 	timer.start()
+	_set_timer_keys_to_zero(timer, _TIMER_KEYS)
 	teacher_log = [T.get_log_header()]
 
 	# wrappers
@@ -40,6 +46,8 @@ def teach(T: Teacher, L: Learner,
 	S_ids = np.append(S_ids, new_ids)
 	h = _run_one_round(T, L, X, X_labels, new_ids,
 		timer, teacher_log)
+
+	#print(teacher_log[-1])
 	
 	num_iters = 1
 	while T.keep_going(h):
@@ -52,6 +60,8 @@ def teach(T: Teacher, L: Learner,
 		S_ids = np.append(S_ids, new_ids)
 		h = _run_one_round(T, L, X, X_labels, new_ids,
 			timer, teacher_log)
+
+		#print(teacher_log[-1])
 
 	timer.finish()
 
@@ -90,3 +100,8 @@ def _run_one_round(T, L, X, X_labels, new_ids,
 	assert get_qtd_columns(S_i) == get_qtd_columns(X)
 
 	return h
+
+def _set_timer_keys_to_zero(timer, keys):
+	for key in keys:
+		timer.tick(key)
+		timer.tock()

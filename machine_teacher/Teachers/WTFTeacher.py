@@ -15,10 +15,11 @@ class WTFTeacher(GenericTeacher.Teacher):
 	
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		frac_stop: float = _FRAC_STOP):
+		frac_stop: float = _FRAC_STOP,):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
+		self.first_examples_seed = seed
 		
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
@@ -48,10 +49,9 @@ class WTFTeacher(GenericTeacher.Teacher):
 			return True
 
 	def get_first_examples(self):
-		warnings.warn("gambiarra temporaria para o shuffle", Warning)
-		_gambiarra_tmp_shuffle = np.random.RandomState(self.seed).shuffle
+		f_shuffle = np.random.RandomState(self.first_examples_seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
-			self.classes, self.y, _gambiarra_tmp_shuffle)
+			self.classes, self.y, f_shuffle)
 		new_ids = np.array(new_ids)
 		return self._send_new_ids(new_ids)
 

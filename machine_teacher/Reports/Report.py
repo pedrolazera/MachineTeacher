@@ -15,13 +15,14 @@ from ..Utils.DatasetLoader import load_dataset_from_path
 
 _SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
-def create_reports_from_configuration_folder(folder_path, dest_folder_path):
+def create_reports_from_configuration_folder(folder_path, dest_folder_path,
+    verbose = False):
     assert os.path.isdir(dest_folder_path)
 
     _sufix = datetime.today().strftime(_SUFIX_FORMAT)
 
     # create subfolder
-    new_folder_name = "experiment_family_{}".format(_sufix)
+    new_folder_name = "family_{}".format(_sufix)
     new_folder_path = os.path.join(dest_folder_path, new_folder_name)
     os.mkdir(new_folder_path)
 
@@ -31,10 +32,14 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path):
         if not _is_valid_configuration_file(file_name):
             continue
 
+        if verbose:
+            print("\n" + "*"*20)
+            print(file_name)
+
         file_path = os.path.join(folder_path, file_name)
         
         TRs_i = create_reports_from_configuration_file(file_path,
-            new_folder_path)
+            new_folder_path, verbose)
         
         # get average result
         avg_TR = TRs_i[0]
@@ -47,7 +52,7 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path):
     create_comparison_table_report(TRs, new_folder_path)
 
 def create_reports_from_configuration_file(src_path: str,
-    dest_folder_path: str = None):
+    dest_folder_path: str = None, verbose = False):
     configs = read_configuration_file(src_path)
 
     if dest_folder_path is None:
@@ -65,6 +70,10 @@ def create_reports_from_configuration_file(src_path: str,
         TR_i = teach(T, L, X, y, dataset_name)
         TRs.append(TR_i)
 
+        if verbose:
+            print("-"*20)
+            print(TR_i.main_infos)
+
     if len(TRs) == 1:
         create_report(TRs[0], dest_folder_path)
     else:
@@ -78,7 +87,7 @@ def create_reports(v, dest_folder_path: str):
     _sufix = datetime.today().strftime(_SUFIX_FORMAT)
 
     # create subfolder
-    new_folder_name = "experiment_set_{}".format(_sufix)
+    new_folder_name = "set_{}".format(_sufix)
     new_folder_path = os.path.join(dest_folder_path, new_folder_name)
     os.mkdir(new_folder_path)
 
@@ -111,7 +120,7 @@ def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     _sufix = datetime.today().strftime(_SUFIX_FORMAT)
 
     # create subfolder
-    new_folder_name = "experiment_{}".format(_sufix)
+    new_folder_name = "run_{}".format(_sufix)
     new_folder_path = os.path.join(dest_folder_path, new_folder_name)
     os.mkdir(new_folder_path)
 
@@ -122,7 +131,7 @@ def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     _convert_teach_result_to_txt(TR, summary_file_path)
 
     # create csv file
-    teacher_log_file_name = "teacher_log{}.csv".format(_sufix)
+    teacher_log_file_name = "teacher_log_{}.csv".format(_sufix)
     teacher_log_file_path = os.path.join(new_folder_path,
         teacher_log_file_name)
     _convert_teacher_log_to_csv(TR.teacher_log, teacher_log_file_path)

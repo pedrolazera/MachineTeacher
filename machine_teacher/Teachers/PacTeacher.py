@@ -3,19 +3,23 @@ from ..Utils.Sampler import get_first_examples
 import numpy as np
 import warnings
 
+_SEED = 0
 _FRAC_START = 0.01
 _FRAC_STOP = 0.2
+_BATCH_RELATIVE_SIZE = 0.005
 
 class PacTeacher(GenericTeacher.Teacher):
 	name = "PacTeacher"
 	
-	def __init__(self, seed: int, batch_relative_size: float,
+	def __init__(self, seed: int = _SEED,
+		batch_relative_size: float = _BATCH_RELATIVE_SIZE,
 		frac_start: float = _FRAC_START,
 		frac_stop: float = _FRAC_STOP):
 		self.seed = seed
 		self.batch_relative_size = batch_relative_size
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
+		self.first_examples_seed = seed
 
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
@@ -43,10 +47,9 @@ class PacTeacher(GenericTeacher.Teacher):
 			return True
 
 	def get_first_examples(self):
-		warnings.warn("gambiarra temporaria para o shuffle", Warning)
-		_gambiarra_tmp_shuffle = np.random.RandomState(self.seed).shuffle
+		f_shuffle = np.random.RandomState(self.first_examples_seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
-			self.classes, self.y, _gambiarra_tmp_shuffle)
+			self.classes, self.y, f_shuffle)
 		new_ids = np.array(new_ids)
 		
 		# update shuffled_ids

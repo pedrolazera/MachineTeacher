@@ -29,7 +29,10 @@ class TeachResult:
 			timer.total_time, # total_time
 			num_iters, # num_iters
 			len(S_ids), # sample_size
-			T._get_accuracy(h) # accuracy
+			T._get_accuracy(h), # accuracy,
+			timer["get examples"], # get_examples_time
+			timer["fit"], # fit time
+			timer["predict"] # predict time
 			)
 		
 		self.timer = timer
@@ -88,7 +91,8 @@ class TeachResult:
 class _MainInfos:
 	def __init__(self, teacher_name: str, learner_name: str,
 		dataset_name: str, total_time: float,
-		num_iters: int, sample_size: int, accuracy: float):
+		num_iters: int, sample_size: int, accuracy: float,
+		get_examples_time: float, fit_time: float, predict_time: float):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_name = dataset_name
@@ -97,16 +101,21 @@ class _MainInfos:
 		self.sample_size = sample_size
 		self.accuracy = accuracy
 		self.num_iters = num_iters
+		self.get_examples_time = get_examples_time
+		self.fit_time = fit_time
+		self.predict_time = predict_time
 
 	@staticmethod
 	def get_header():
 		return ["teacher_name", "learner_name", "dataset_name",
-			"total_time", "num_iters", "sample_size", "accuracy"]
+			"total_time", "num_iters", "sample_size", "accuracy",
+			"get_examples_time", "fit_time", "predict_time"]
 
 	def get_infos_list(self):
 		return [self.teacher_name, self.learner_name,
 			self.dataset_name, self.total_time, self.num_iters,
-			self.sample_size, self.accuracy]
+			self.sample_size, self.accuracy,
+			self.get_examples_time, self.fit_time, self.predict_time]
 
 	def __add__(self, other):
 		assert self.teacher_name == other.teacher_name
@@ -119,6 +128,9 @@ class _MainInfos:
 		new.sample_size += other.sample_size
 		new.accuracy += other.accuracy
 		new.num_iters += other.num_iters
+		new.get_examples_time += other.get_examples_time
+		new.fit_time += other.fit_time
+		new.predict_time += other.predict_time
 		
 		return new
 
@@ -129,6 +141,9 @@ class _MainInfos:
 		new.sample_size *= alpha
 		new.accuracy *= alpha
 		new.num_iters *= alpha
+		new.get_examples_time *= alpha
+		new.fit_time *= alpha
+		new.predict_time *= alpha
 		
 		return new
 
@@ -144,6 +159,9 @@ class _MainInfos:
 		_v.append("num_iters: {}".format(self.num_iters))
 		_v.append("sample size: {}".format(self.sample_size))
 		_v.append("accuracy: {:.3f}".format(self.accuracy))
+		_v.append("get_examples_time: {:.3f}".format(self.get_examples_time))
+		_v.append("fit_time: {:.3f}".format(self.fit_time))
+		_v.append("predict_time: {:.3f}".format(self.predict_time))
 
 		return "\n".join(_v)
 

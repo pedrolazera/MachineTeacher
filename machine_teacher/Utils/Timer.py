@@ -89,3 +89,6 @@ class Timer:
 
 	def __truediv__(self, alpha):
 		return self.__mul__(1/alpha)
+
+	def __getitem__(self, key):
+		return self._d[key]
