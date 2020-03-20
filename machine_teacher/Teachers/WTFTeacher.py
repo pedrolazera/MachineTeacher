@@ -7,19 +7,21 @@ import warnings
 # numpy convetions
 _ROW_AXIS = 0
 _FRAC_START = 0.01
-_FRAC_STOP = 0.5
+_FRAC_STOP = 1.0
 _SEED = 0
+_FIRST_EXAMPLE_SEED = 0
 
 class WTFTeacher(GenericTeacher.Teacher):
 	name = "WTFTeacher"
 	
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		frac_stop: float = _FRAC_STOP,):
+		frac_stop: float = _FRAC_STOP,
+		first_example_seed: int = _FIRST_EXAMPLE_SEED):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.frac_stop = frac_stop
-		self.first_examples_seed = seed
+		self.first_examples_seed = first_example_seed
 		
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
