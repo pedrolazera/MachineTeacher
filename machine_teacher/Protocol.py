@@ -19,9 +19,12 @@ _TIMER_KEYS = (
 	"build training set and labels for new examples",
 	"fit", "predict", "build teacher log")
 
+_TIME_LIMIT = 1000000000.0 # in seconds
+
 def teach(T: Teacher, L: Learner,
-	X: InputSpace, X_labels: Labels,
-	dataset_name = TeachResult._DATASET_STD_NAME) -> TeachResult:
+	X: InputSpace, X_labels: Labels, *,
+	dataset_name = TeachResult._DATASET_STD_NAME,
+	time_limit = _TIME_LIMIT) -> TeachResult:
 	timer = Timer()
 	timer.start()
 	_set_timer_keys_to_zero(timer, _TIMER_KEYS)
@@ -50,7 +53,7 @@ def teach(T: Teacher, L: Learner,
 	#print(teacher_log[-1])
 	
 	num_iters = 1
-	while T.keep_going(h):
+	while (timer.get_elapsed_time() < time_limit) and T.keep_going(h):
 		num_iters += 1
 
 		timer.tick("get examples")

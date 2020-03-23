@@ -8,7 +8,8 @@ _SECTIONS = ('teacher', 'learner', 'dataset', 'destination')
 class _TestConfiguration:
 	def __init__(self, teacher_name: str, learner_name: str,
 		dataset_path: str, dataset_is_numeric: bool,
-		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str):
+		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str,
+		protocol_kwargs: dict):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_path = dataset_path
@@ -17,6 +18,7 @@ class _TestConfiguration:
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
+		self.protocol_kwargs = protocol_kwargs
 
 	def __str__(self):
 		return "\n".join((
@@ -25,13 +27,15 @@ class _TestConfiguration:
 			self.dataset_path,
 			str(self.teacher_kwargs),
 			str(self.learner_kwargs),
-			self.dest_folder
+			self.dest_folder,
+			self.protocol_kwargs
 			))
 
 class _TestConfigurations:
 	def __init__(self, teacher_name: str, learner_name: str,
 		dataset_path: str, dataset_is_numeric: bool,
-		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str):
+		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str,
+		protocol_kwargs: dict):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_path = dataset_path
@@ -40,13 +44,14 @@ class _TestConfigurations:
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
+		self.protocol_kwargs = protocol_kwargs
 
 		self._teacher_params = list(self.teacher_kwargs.keys())
 		self._learner_params = list(self.learner_kwargs.keys())
 
 	def __iter__(self):
-		self._teacher_args_iter = iter(CustomIterator(self._get_v_teacher_limits()))
-		self._learner_args_iter = iter(CustomIterator(self._get_v_learner_limits()))
+		self._teacher_args_iter = self._get_teacher_args_iter()
+		self._learner_args_iter = self._get_learner_args_iter()
 		self._v_teacher = next(self._teacher_args_iter)
 
 		return self
@@ -56,7 +61,7 @@ class _TestConfigurations:
 			if self._teacher_args_iter.qtd_left() == 0:
 				raise StopIteration
 			else:
-				self._learner_args_iter = iter(CustomIterator(self._get_v_learner_limits()))
+				self._learner_args_iter = self._get_learner_args_iter()
 				self._v_teacher = next(self._teacher_args_iter)
 
 		self._v_learner = next(self._learner_args_iter)
@@ -66,7 +71,15 @@ class _TestConfigurations:
 
 		return _TestConfiguration(self.teacher_name, self.learner_name,
 			self.dataset_path, self.dataset_is_numeric, _d_teacher,
-			_d_learner, self.dest_folder)
+			_d_learner, self.dest_folder, self.protocol_kwargs)
+
+	def _get_teacher_args_iter(self):
+		limits = self._get_v_teacher_limits()
+		return iter(CustomIterator(self._get_v_teacher_limits()))
+
+	def _get_learner_args_iter(self):
+		limits = self._get_v_learner_limits()
+		return iter(CustomIterator(self._get_v_learner_limits()))
 
 	def _get_v_teacher_limits(self):
 		v = [0] * len(self._teacher_params)
@@ -114,13 +127,19 @@ def read_configuration_file(path: str):
 
 	teacher_name, teacher_kwargs = _parse_teacher_section(config['teacher'])
 	learner_name, learner_kwargs = _parse_learner_section(config['learner'])
-	#dataset_path = _parse_string(config['dataset']['path'])
 	dataset_path, is_numeric = _parse_dataset_section(config['dataset'])
 	dest_folder = _parse_string(config['destination']['path'])
 
+	# protocol optional args
+	if config.has_section("protocol"):
+		protocol_kwargs = _parse_protocol_section(config['protocol'])
+	else:
+		protocol_kwargs = dict()
+
 	return _TestConfigurations(
 		teacher_name, learner_name, dataset_path, is_numeric,
-		teacher_kwargs, learner_kwargs, dest_folder
+		teacher_kwargs, learner_kwargs, dest_folder,
+		protocol_kwargs
 		)
 
 def _sections_to_lowercase(config):
@@ -148,6 +167,19 @@ def _parse_dataset_section(section):
 	is_numeric = _parse_boolean(section['is_numeric'])
 
 	return (path, is_numeric)
+
+def _parse_protocol_section(section):
+	kwargs = dict()
+	
+	for (key, val) in dict(section).items():
+		val = _parse_value(val)
+
+		assert len(val) == 1, "protocol parameters does not support lists"
+
+		val = val[0]
+		kwargs[key] = val
+
+	return kwargs
 
 def _parse_value(x):
 	x = json.loads(x)

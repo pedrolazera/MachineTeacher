@@ -13,10 +13,11 @@ class CustomIterator:
 		return self
 
 	def __next__(self):
-		self.i += 1
-		if self._is_lower_or_equal(self._v, self.upper_bounds):
+		if self.qtd_left():
+			self.i += 1
 			v = copy(self._v)
-			self._add_one(self._v, self.upper_bounds)
+			if len(v) > 0:
+				self._add_one(self._v, self.upper_bounds)
 			return v
 		else:
 			raise StopIteration
@@ -35,7 +36,6 @@ class CustomIterator:
 			v[i] = 0
 			v[i+1] += 1
 			i += 1
-
 
 	def _is_lower_or_equal(self, v1, v2):
 		assert len(v1) == len(v2)

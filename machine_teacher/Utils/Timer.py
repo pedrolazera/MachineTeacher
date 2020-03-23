@@ -49,6 +49,13 @@ class Timer:
 
 		self._state = Timer._OFF_STATE
 
+	def get_elapsed_time(self):
+		if self._state == Timer._OFF_STATE:
+			return 0.0
+		else:
+			elapsed_time = default_timer() - self._t0_total_time
+			return elapsed_time
+
 	def __str__(self):
 		d_names = list(self._d.keys())
 		d_values = [self._d[name] for name in d_names]

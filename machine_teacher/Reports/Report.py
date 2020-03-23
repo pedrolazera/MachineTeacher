@@ -51,6 +51,8 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path,
 
     create_comparison_table_report(TRs, new_folder_path)
 
+    return new_folder_path
+
 def create_reports_from_configuration_file(src_path: str,
     dest_folder_path: str = None, verbose = False):
     configs = read_configuration_file(src_path)
@@ -62,12 +64,15 @@ def create_reports_from_configuration_file(src_path: str,
     X, y = load_dataset_from_path(configs.dataset_path,
         dataset_is_numeric)
     dataset_name = configs.dataset_name
+    protocol_kwargs = configs.protocol_kwargs
     
     TRs = []
     for conf in configs:
         T = get_teacher(conf.teacher_name, conf.teacher_kwargs)
         L = get_learner(conf.learner_name, conf.learner_kwargs)
-        TR_i = teach(T, L, X, y, dataset_name)
+        TR_i = teach(T, L, X, y,
+            dataset_name=dataset_name,
+            **protocol_kwargs)
         TRs.append(TR_i)
 
         if verbose:
@@ -97,6 +102,8 @@ def create_reports(v, dest_folder_path: str):
         create_report(teach_result, new_folder_path)
         sleep(0.001) # avoid name colision
 
+    return new_folder_path
+
 def create_comparison_table_report(v,
     dest_folder_path: str) -> None:
     # build report
@@ -112,6 +119,8 @@ def create_comparison_table_report(v,
     with open(file_path, "w", newline='') as csv_file:
         csv_writer = csv.writer(csv_file)
         csv_writer.writerows(report_lines)
+
+    return file_path
 
 def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     assert os.path.isdir(dest_folder_path)
@@ -135,6 +144,8 @@ def create_report(TR: TeachResult, dest_folder_path: str) -> None:
     teacher_log_file_path = os.path.join(new_folder_path,
         teacher_log_file_name)
     _convert_teacher_log_to_csv(TR.teacher_log, teacher_log_file_path)
+
+    return (summary_file_path, teacher_log_file_path)
 
 def _convert_teacher_log_to_csv(log, path: str):
     assert os.path.isdir(os.path.dirname(path))

@@ -11,6 +11,7 @@ _D_TEACHERS = {
 	Teachers.RandomTeacher.name: Teachers.RandomTeacher,
 	Teachers.PacTeacher.name: Teachers.PacTeacher,
 	Teachers.WTFTeacher.name: Teachers.WTFTeacher,
+	Teachers.SingleBatchTeacher.name: Teachers.SingleBatchTeacher,
 }
 
 def get_teacher(teacher_name, args):
