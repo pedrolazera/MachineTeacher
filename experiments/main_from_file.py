@@ -11,7 +11,7 @@ _DEST_FOLDER = os.path.join(".", "results")
 _DEST_FOLDER = os.path.abspath(_DEST_FOLDER)
 
 
-_ERROR_MSG = "should be 'python main1.py <configuration_folder_name>'"
+_ERROR_MSG = "should be 'python main_from_file.py <configuration_file_name>'"
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
