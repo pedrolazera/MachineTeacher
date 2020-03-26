@@ -13,7 +13,8 @@ class TeachResult:
 
 	def __init__(self, T: Teacher, L: Learner,
 		S_ids, h: Labels, timer: Timer,
-		num_iters: int,
+		qtd_iters: int,
+		qtd_attributes: int,
 		teacher_log,
 		dataset_name: str = _DATASET_STD_NAME):
 
@@ -26,9 +27,11 @@ class TeachResult:
 			T.name, # teacher_name
 			L.name, # learner_name
 			dataset_name, # dataset_name
+			len(h), #"dataset_qtd_examples"
+			qtd_attributes, # qtd_attributes
 			timer.total_time, # total_time
-			num_iters, # num_iters
-			len(S_ids), # sample_size
+			qtd_iters, # qtd_iters
+			len(S_ids), # teaching_set_size
 			T._get_accuracy(h), # accuracy,
 			timer["get examples"], # get_examples_time
 			timer["fit"], # fit time
@@ -90,17 +93,20 @@ class TeachResult:
 
 class _MainInfos:
 	def __init__(self, teacher_name: str, learner_name: str,
-		dataset_name: str, total_time: float,
-		num_iters: int, sample_size: int, accuracy: float,
+		dataset_name: str, dataset_qtd_examples: int,
+		qtd_attributes: int, total_time: float, qtd_iters: int, 
+		teaching_set_size: int, accuracy: float,
 		get_examples_time: float, fit_time: float, predict_time: float):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_name = dataset_name
+		self.dataset_qtd_examples = dataset_qtd_examples
+		self.qtd_attributes = qtd_attributes
 
 		self.total_time = total_time
-		self.sample_size = sample_size
+		self.teaching_set_size = teaching_set_size
 		self.accuracy = accuracy
-		self.num_iters = num_iters
+		self.qtd_iters = qtd_iters
 		self.get_examples_time = get_examples_time
 		self.fit_time = fit_time
 		self.predict_time = predict_time
@@ -108,26 +114,31 @@ class _MainInfos:
 	@staticmethod
 	def get_header():
 		return ["teacher_name", "learner_name", "dataset_name",
-			"total_time", "num_iters", "sample_size", "accuracy",
+			"dataset_qtd_examples", "dataset_qtd_attributes",
+			"total_time", "qtd_iters",
+			"teaching_set_size", "accuracy",
 			"get_examples_time", "fit_time", "predict_time"]
 
 	def get_infos_list(self):
 		return [self.teacher_name, self.learner_name,
-			self.dataset_name, self.total_time, self.num_iters,
-			self.sample_size, self.accuracy,
+			self.dataset_name, self.dataset_qtd_examples,
+			self.qtd_attributes, self.total_time, self.qtd_iters,
+			self.teaching_set_size, self.accuracy,
 			self.get_examples_time, self.fit_time, self.predict_time]
 
 	def __add__(self, other):
 		assert self.teacher_name == other.teacher_name
 		assert self.learner_name == other.learner_name
 		assert self.dataset_name == other.dataset_name
+		assert self.dataset_qtd_examples == other.dataset_qtd_examples
+		assert self.qtd_attributes == other.qtd_attributes
 
 		new = deepcopy(self)
 
 		new.total_time += other.total_time
-		new.sample_size += other.sample_size
+		new.teaching_set_size += other.teaching_set_size
 		new.accuracy += other.accuracy
-		new.num_iters += other.num_iters
+		new.qtd_iters += other.qtd_iters
 		new.get_examples_time += other.get_examples_time
 		new.fit_time += other.fit_time
 		new.predict_time += other.predict_time
@@ -138,9 +149,9 @@ class _MainInfos:
 		new = deepcopy(self)
 
 		new.total_time *= alpha
-		new.sample_size *= alpha
+		new.teaching_set_size *= alpha
 		new.accuracy *= alpha
-		new.num_iters *= alpha
+		new.qtd_iters *= alpha
 		new.get_examples_time *= alpha
 		new.fit_time *= alpha
 		new.predict_time *= alpha
@@ -155,9 +166,11 @@ class _MainInfos:
 		_v.append("teacher: {}".format(self.teacher_name))
 		_v.append("learner: {}".format(self.learner_name))
 		_v.append("dataset: {}".format(self.dataset_name))
+		_v.append("dataset qtd examples: {}".format(self.dataset_qtd_examples))
+		_v.append("qtd attributes: {}".format(self.qtd_attributes))
 		_v.append("total_time: {:.3f}".format(self.total_time))
-		_v.append("num_iters: {}".format(self.num_iters))
-		_v.append("sample size: {}".format(self.sample_size))
+		_v.append("qtd iters: {}".format(self.qtd_iters))
+		_v.append("teaching set size: {}".format(self.teaching_set_size))
 		_v.append("accuracy: {:.3f}".format(self.accuracy))
 		_v.append("get_examples_time: {:.3f}".format(self.get_examples_time))
 		_v.append("fit_time: {:.3f}".format(self.fit_time))

@@ -4,24 +4,43 @@ def get_first_examples(prop, m, classes, y, shuffle_function):
 	new_ids = []
 	n_samples = prop*m
 	class_distribution = [0 for c in classes]
+	
 	for c in y:
 		class_distribution[c] += 1
-	class_samples = [np.ceil((c/m)*n_samples) for c in class_distribution]
+	
+	#class_samples = [np.ceil((c/m)*n_samples) for c in class_distribution]
+	class_samples = _get_class_samples(n_samples, m, class_distribution)
 	n_samples = np.sum(class_samples)
-	cont = 0
-	classes_number = len(classes)
-	v_cont = [0 for x in range(classes_number)]
+	
+	#classes_number = len(classes)
+	#v_cont = [0 for x in range(classes_number)]
+	
+	v_cont = [0] * len(classes)
 	aux = [i for i in range(m)]
 	shuffle_function(aux)
+	
+	cont = 0
 	i = 0
 	while (cont < n_samples):
-		if v_cont[y[aux[i]]] < class_samples[y[aux[i]]]:
-			new_ids.append(aux[i])
+		id_i = aux[i]
+		class_i = y[id_i]
+		if v_cont[class_i] < class_samples[class_i]:
+			new_ids.append(id_i)
 			cont+=1
-			v_cont[y[aux[i]]] += 1
+			v_cont[class_i] += 1
 		i+=1
 
 	return new_ids
+
+def _get_class_samples(n_samples, m, class_distribution):
+	class_samples = [0]*len(class_distribution)
+
+	for (i, tot_class_i) in enumerate(class_distribution):
+		qtd_class_i = np.ceil(tot_class_i/m * n_samples)
+		qtd_class_i = min(qtd_class_i, tot_class_i)
+		class_samples[i] = qtd_class_i
+
+	return class_samples
 
 def choose_ids(population, weights, n):
 	# cria elemento artificial para complementar probabilidade

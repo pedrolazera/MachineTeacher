@@ -52,9 +52,9 @@ def teach(T: Teacher, L: Learner,
 
 	#print(teacher_log[-1])
 	
-	num_iters = 1
+	qtd_iters = 1
 	while (timer.get_elapsed_time() < time_limit) and T.keep_going(h):
-		num_iters += 1
+		qtd_iters += 1
 
 		timer.tick("get examples")
 		new_ids = T.get_new_examples(h) # examples ids
@@ -64,14 +64,12 @@ def teach(T: Teacher, L: Learner,
 		h = _run_one_round(T, L, X, X_labels, new_ids,
 			timer, teacher_log)
 
-		#print(teacher_log[-1])
-
 	timer.finish()
 
-	assert num_iters+1 == len(teacher_log)
+	assert qtd_iters+1 == len(teacher_log)
 
-	return TeachResult(T, L, S_ids, h, timer, num_iters,
-		teacher_log, dataset_name)
+	return TeachResult(T, L, S_ids, h, timer, qtd_iters,
+		get_qtd_columns(X), teacher_log, dataset_name)
 
 def _run_one_round(T, L, X, X_labels, new_ids,
 	timer, teacher_log):
