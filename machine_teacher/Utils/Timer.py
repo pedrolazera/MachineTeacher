@@ -1,14 +1,15 @@
 from timeit import default_timer
+from copy import deepcopy
 
 class Timer:
 	_OFF_STATE = 0
 	_ON_STATE = 1
 	_TICK_STATE = 2
 	_STOP_STATE = 3
+	_FINISHED_STATE = 4
 
 	def __init__(self):
 		self._d = dict()
-		self._d_t0 = dict()
 		self._state = Timer._OFF_STATE
 
 	def start(self):
@@ -18,9 +19,12 @@ class Timer:
 		self._t0_total_time = default_timer()
 
 		self._d.clear()
-		self._d_t0.clear()
 
 		self._state = Timer._ON_STATE
+
+		self._curr_field = None
+		self._t0_stop_time = None
+		self._t0_curr_field = None
 
 	def tick(self, field):
 		if self._state == Timer._STOP_STATE:
@@ -28,19 +32,20 @@ class Timer:
 		
 		assert (self._state == Timer._ON_STATE), "cannot tick twice or tick before start"
 		
-		self._d_t0[field] = default_timer()
-		self.curr_field = field
+		self._t0_curr_field = default_timer()
+		self._curr_field = field
 
 		self._state = Timer._TICK_STATE
 
 	def tock(self):
 		assert (self._state == Timer._TICK_STATE), "cannot tock before tick"
 
-		curr_field = self.curr_field
-		delta = default_timer() - self._d_t0[curr_field]
+		curr_field = self._curr_field
+		delta = default_timer() - self._t0_curr_field
 		self._d[curr_field] = self._d.get(curr_field, 0.0) + delta
 
 		self._state = Timer._ON_STATE
+		self._curr_field = None
 
 	def finish(self):
 		assert (self._state in (Timer._ON_STATE,
@@ -49,16 +54,18 @@ class Timer:
 		if self._state == Timer._TICK_STATE:
 			self.tock()
 		elif self._state == Timer._STOP_STATE:
-			self.restart()
+			self.unstop()
 
 		self.total_time = default_timer() - self._t0_total_time
 		self.others_time = self.total_time - sum(self._d.values())
 
-		self._state = Timer._OFF_STATE
+		self._state = Timer._FINISHED_STATE
 
 	def get_elapsed_time(self):
 		if self._state == Timer._OFF_STATE:
 			elapsed_time = 0.0
+		if self._state == Timer._FINISHED_STATE:
+			elapsed_time = self.total_time
 		elif self._state == Timer._STOP_STATE:
 			elapsed_time = self._t0_stop_time - self._t0_total_time
 		else:
@@ -126,3 +133,15 @@ class Timer:
 
 	def __getitem__(self, key):
 		return self._d[key]
+
+	def __copy__(self):
+		other = Timer()
+		other._d = deepcopy(self._d)
+
+		other.total_time = self.total_time
+		other.others_time = self.others_time
+		other._t0_total_time = self._t0_total_time
+		other._state = self._state
+		other._curr_field = self._curr_field
+		other._t0_stop_time = self._t0_stop_time
+		other._t0_curr_field = self._t0_curr_field

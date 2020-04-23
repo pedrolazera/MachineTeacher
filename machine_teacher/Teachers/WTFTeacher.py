@@ -32,7 +32,7 @@ class WTFTeacher(Teacher):
 		m = X.shape[_ROW_AXIS] # number of rows
 		self.m = m
 		self.S_max_size = int(m * self.frac_stop)
-		self.first_batch_size = int(m * self.frac_start)
+		#self.first_batch_size = int(m * self.frac_start)
 		self.num_iters = 0
 		self.selected = np.full(m, False)
 		self._random = np.random.RandomState(self.seed)
