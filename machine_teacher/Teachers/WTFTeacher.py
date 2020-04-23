@@ -1,4 +1,4 @@
-from .. import GenericTeacher
+from ..GenericTeacher import Teacher
 from ..Utils.Sampler import get_first_examples
 from ..Utils.Sampler import choose_ids
 import numpy as np
@@ -11,7 +11,7 @@ _FRAC_STOP = 1.0
 _SEED = 0
 _FIRST_EXAMPLE_SEED = 0
 
-class WTFTeacher(GenericTeacher.Teacher):
+class WTFTeacher(Teacher):
 	name = "WTFTeacher"
 	
 	def __init__(self, seed: int = _SEED,
@@ -42,8 +42,10 @@ class WTFTeacher(GenericTeacher.Teacher):
 		self.classes = np.unique(self.y)
 		self.S_current_size = 0
 
-	def keep_going(self, h) -> bool:
-		if len(self._get_delta_h(h)) == 0:
+	def _keep_going(self, test_labels) -> bool:
+		assert len(test_labels) == self.m
+
+		if len(self._get_delta_h(test_labels)) == 0:
 			return False
 		elif self.S_current_size >= self.S_max_size:
 			return False
@@ -57,8 +59,11 @@ class WTFTeacher(GenericTeacher.Teacher):
 		new_ids = np.array(new_ids)
 		return self._send_new_ids(new_ids)
 
-	def get_new_examples(self, h):
-		wrong_labels = self._get_delta_h(h)
+	def get_new_examples(self, test_ids, test_labels):
+		if not self._keep_going(test_labels):
+			return np.array([])
+
+		wrong_labels = self._get_delta_h(test_labels)
 		
 		new_ids = []
 		while new_ids == []:
@@ -84,8 +89,8 @@ class WTFTeacher(GenericTeacher.Teacher):
 		
 		return new_ids
 
-	def _get_delta_h(self, h):
-		delta_h = self._get_wrong_labels_id(h)
+	def _get_delta_h(self, test_labels):
+		delta_h = self._get_wrong_labels_id(test_labels)
 		delta_h = [i for i in delta_h if not self.selected[i]] #analisar se cabe melhoria com setdiff1d
 		delta_h = np.array(delta_h)
 		return delta_h
@@ -137,8 +142,10 @@ class WTFTeacher(GenericTeacher.Teacher):
 	def get_log_header(self):
 		return ["iter_number", "n", "training_set_size", "accuracy"]
 
-	def get_log_line(self, h):
-		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
+	def get_log_line(self, test_labels):
+		assert len(test_labels) == self.m
+
+		accuracy = 1 - self._get_wrong_labels_id(test_labels).size/self.y.size
 		log_line = [self.num_iters, self.n, self.S_current_size, accuracy]
 		return log_line
 

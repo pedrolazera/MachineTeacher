@@ -4,6 +4,7 @@ class Timer:
 	_OFF_STATE = 0
 	_ON_STATE = 1
 	_TICK_STATE = 2
+	_STOP_STATE = 3
 
 	def __init__(self):
 		self._d = dict()
@@ -22,6 +23,9 @@ class Timer:
 		self._state = Timer._ON_STATE
 
 	def tick(self, field):
+		if self._state == Timer._STOP_STATE:
+			self.unstop()
+		
 		assert (self._state == Timer._ON_STATE), "cannot tick twice or tick before start"
 		
 		self._d_t0[field] = default_timer()
@@ -39,10 +43,13 @@ class Timer:
 		self._state = Timer._ON_STATE
 
 	def finish(self):
-		assert (self._state != Timer._OFF_STATE), "cannot finish before start"
+		assert (self._state in (Timer._ON_STATE,
+			Timer._TICK_STATE, Timer._STOP_STATE)), "cannot finish before start"
 		
 		if self._state == Timer._TICK_STATE:
 			self.tock()
+		elif self._state == Timer._STOP_STATE:
+			self.restart()
 
 		self.total_time = default_timer() - self._t0_total_time
 		self.others_time = self.total_time - sum(self._d.values())
@@ -51,10 +58,30 @@ class Timer:
 
 	def get_elapsed_time(self):
 		if self._state == Timer._OFF_STATE:
-			return 0.0
+			elapsed_time = 0.0
+		elif self._state == Timer._STOP_STATE:
+			elapsed_time = self._t0_stop_time - self._t0_total_time
 		else:
 			elapsed_time = default_timer() - self._t0_total_time
-			return elapsed_time
+		
+		return elapsed_time
+
+	def stop(self):
+		assert self._state in (Timer._ON_STATE, Timer._TICK_STATE)
+		
+		if self._state == Timer._TICK_STATE:
+			self.tock()
+
+		self._state = Timer._STOP_STATE
+		self._t0_stop_time = default_timer()
+
+	def unstop(self):
+		assert self._state == Timer._STOP_STATE, "cannot unstop before stop"
+
+		delta = default_timer() - self._t0_stop_time
+		self._t0_total_time += delta
+
+		self._state = Timer._ON_STATE
 
 	def __str__(self):
 		d_names = list(self._d.keys())

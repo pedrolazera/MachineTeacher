@@ -6,18 +6,21 @@ from .Definitions import Labels
 
 class Teacher:
 	name = "GenericTeacher"
-	
-	def start(self, X: InputSpace, y: Labels):
-		raise NotImplementedError
 
-	def keep_going(self, h: Labels) -> bool:
+	def start(self, X: InputSpace, y: Labels):
 		raise NotImplementedError
 
 	def get_first_examples(self) -> np.ndarray:
 		raise NotImplementedError
 
-	def get_new_examples(self, h: Labels) -> np.ndarray:
+	def get_new_examples(self, test_ids, test_labels: Labels) -> np.ndarray:
 		raise NotImplementedError
+
+	def get_new_test_ids(self, test_ids, test_labels: Labels) -> np.ndarray:
+		if len(test_ids) == 0:
+			return self.ids
+		else:
+			return []
 
 	def get_log_header(self):
 		return []
@@ -35,7 +38,7 @@ class Teacher:
 
 		qtd_rows_X = get_qtd_rows(X)
 		qtd_rows_y = get_qtd_rows(y)
-		assert qtd_rows_X == qtd_rows_X
+		assert qtd_rows_X == qtd_rows_y
 
 	def _get_wrong_labels_id(self, h: Labels):
 		wrong_labels = self.y != h

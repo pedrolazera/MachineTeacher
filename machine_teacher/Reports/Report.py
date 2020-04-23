@@ -72,7 +72,7 @@ def create_reports_from_configuration_file(src_path: str,
 	for conf in configs:
 		T = get_teacher(conf.teacher_name, conf.teacher_kwargs)
 		L = get_learner(conf.learner_name, conf.learner_kwargs)
-		TR_i = teach(T, L, X, y,
+		TR_i = teach(T, L, X.copy(), y.copy(),
 			dataset_name=dataset_name,
 			**protocol_kwargs)
 		TRs.append(TR_i)

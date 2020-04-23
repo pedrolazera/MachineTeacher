@@ -1,19 +1,27 @@
 import numpy as np
-from .. import GenericTeacher
+from ..GenericTeacher import Teacher
 from ..Utils.Sampler import get_first_examples
+from sklearn import preprocessing
+import warnings
 
 _SEED = 0
 _FRAC_START = 0.01
 
-class DoubleTeacher(GenericTeacher.Teacher):
+class DoubleTeacher(Teacher):
 	name = "DoubleTeacher"
 
 	def __init__(self, seed: int = _SEED,
-		frac_start: float = _FRAC_START):
+		frac_start: float = _FRAC_START,
+		scale: bool = True):
 		self.seed = seed
 		self.frac_start = frac_start
+		self.scale = scale
 
 	def start(self, X, y):
+		if self.scale:
+			warnings.warn("X is being scaled inplace!")
+			preprocessing.scale(X, copy = False)
+
 		self._start(X, y)
 		self.num_iters = 0
 		self.m = y.size
@@ -21,7 +29,7 @@ class DoubleTeacher(GenericTeacher.Teacher):
 		self.shuffled_ids = self._get_shuffled_ids()
 		self.batch_size = 1
 		
-	def keep_going(self, h):
+	def _keep_going(self):
 		return self.S_current_size < self.m
 
 	def get_first_examples(self):
@@ -37,12 +45,18 @@ class DoubleTeacher(GenericTeacher.Teacher):
 
 		return self._send_new_ids(new_ids)
 
-	def get_new_examples(self, h):
+	def get_new_examples(self, test_ids, test_labels):
+		if not self._keep_going():
+			return np.array([])
+
 		_start = self.S_current_size
 		_end = min(_start + self.batch_size, self.m)
 		new_ids = self.shuffled_ids[_start:_end]
 		self.batch_size *= 2
 		return self._send_new_ids(new_ids)
+
+	def get_new_test_ids(self, test_ids, test_labels) -> np.ndarray:
+		return np.array([])
 
 	def get_log_header(self):
 		return ["iter_number", "training_set_size", "accuracy"]

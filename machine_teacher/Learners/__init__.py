@@ -1,3 +1,5 @@
 from .LinearRegressionLearner import LinearRegressionLearner
 from .LogisticRegressionLearner import LogisticRegressionLearner
 from .RandomForestLearner import RandomForestLearner
+from .SVMLinearLearner import SVMLinearLearner
+from .SVMLearner import SVMLearner

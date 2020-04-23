@@ -1,4 +1,4 @@
-from .. import GenericTeacher
+from ..GenericTeacher import Teacher
 from ..Utils.Sampler import get_first_examples
 import numpy as np
 import warnings
@@ -9,7 +9,7 @@ _FRAC_STOP = 0.2
 _BATCH_RELATIVE_SIZE = 0.005
 _FIRST_EXAMPLE_SEED = 0
 
-class PacTeacher(GenericTeacher.Teacher):
+class PacTeacher(Teacher):
 	name = "PacTeacher"
 	
 	def __init__(self, seed: int = _SEED,
@@ -39,11 +39,13 @@ class PacTeacher(GenericTeacher.Teacher):
 		self.classes = np.unique(y)
 		self.num_iters = 0
 		self.selected = np.full(self.m, False)
-		
-	def keep_going(self, h):
+
+	def _keep_going(self, test_labels):
+		assert len(test_labels) == self.m
+
 		if self.S_current_size >= self.S_max_size:
 			return False
-		elif len(self.get_wrong_and_unselected_labels_id(h)) == 0: # delta_h = {}
+		elif len(self.get_wrong_and_unselected_labels_id(test_labels)) == 0: # delta_h = {}
 			return False
 		else:
 			return True
@@ -60,7 +62,10 @@ class PacTeacher(GenericTeacher.Teacher):
 
 		return self._send_new_ids(new_ids)
 
-	def get_new_examples(self, h):
+	def get_new_examples(self, test_ids, test_labels):
+		if not self._keep_going(test_labels):
+			return np.array([])
+
 		# build slice
 		_start = self.free_spot
 		_batch_size = min(self.batch_size, self.S_max_size - self.S_current_size)
@@ -69,8 +74,8 @@ class PacTeacher(GenericTeacher.Teacher):
 		self.free_spot += len(new_ids)
 		return self._send_new_ids(new_ids)
 
-	def get_wrong_and_unselected_labels_id(self, h):
-		wrong_labels_id = self._get_wrong_labels_id(h)
+	def get_wrong_and_unselected_labels_id(self, test_labels):
+		wrong_labels_id = self._get_wrong_labels_id(test_labels)
 		unselected = [i for i in wrong_labels_id if not self.selected[i]]
 		unselected = np.array(unselected)
 		return unselected
@@ -87,8 +92,8 @@ class PacTeacher(GenericTeacher.Teacher):
 		return ["iter_number", "training_set_size",
 			"accuracy", "accuracy do conj. de treino"]
 
-	def get_log_line(self, h):
-		accuracy = 1 - self._get_wrong_labels_id(h).size/self.y.size
+	def get_log_line(self, test_labels):
+		accuracy = 1 - self._get_wrong_labels_id(test_labels).size/self.y.size
 		log_line = [self.num_iters, self.S_current_size, accuracy, 0.0]
 		return log_line
 
@@ -114,8 +119,3 @@ class PacTeacher(GenericTeacher.Teacher):
 			"frac_start": self.frac_start,
 			"frac_stop": self.frac_stop,
 		}
-
-
-
-
-

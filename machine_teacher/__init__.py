@@ -1,3 +1,4 @@
+#from .Protocol import teach
 from .Protocol import teach
 from . import Teachers
 from . import Learners

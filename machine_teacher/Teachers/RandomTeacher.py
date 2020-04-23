@@ -1,7 +1,7 @@
-from .. import GenericTeacher
+from ..GenericTeacher import Teacher
 import numpy as np
 
-class RandomTeacher(GenericTeacher.Teacher):
+class RandomTeacher(Teacher):
 	name = "RandomTeacher"
 	_MAX_ITERS = 1000
 
@@ -22,7 +22,7 @@ class RandomTeacher(GenericTeacher.Teacher):
 		self._random = np.random.RandomState(self.seed)
 		self.selected = np.full(self.m, False)
 
-	def keep_going(self, h):
+	def _keep_going(self) -> bool:
 		if self.iters >= self.max_iters:
 			return False
 		elif np.all(self.selected):
@@ -30,9 +30,14 @@ class RandomTeacher(GenericTeacher.Teacher):
 		else:
 			return True
 
-	def get_new_examples(self, h):
+	def get_new_examples(self, test_ids, test_labels):
+		assert len(test_labels) == self.m
+
+		if not self._keep_going():
+			return np.array([])
+
 		self.iters += 1
-		wrong_labels = self.get_wrong_and_unselected_labels_id(h)
+		wrong_labels = self.get_wrong_and_unselected_labels_id(test_labels)
 
 		assert wrong_labels.size > 0
 
@@ -49,8 +54,10 @@ class RandomTeacher(GenericTeacher.Teacher):
 	def _update_selected_ids(self, new_ids):
 		self.selected[new_ids] = True
 
-	def get_wrong_and_unselected_labels_id(self, h):
-		wrong_labels_id = self._get_wrong_labels_id(h)
+	def get_wrong_and_unselected_labels_id(self, test_labels):
+		assert len(test_labels) == self.m
+		
+		wrong_labels_id = self._get_wrong_labels_id(test_labels)
 		unselected = [i for i in wrong_labels_id if not self.selected[i]]
 		unselected = np.array(unselected)
 		return unselected

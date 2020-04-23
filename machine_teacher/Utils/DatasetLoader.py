@@ -13,7 +13,7 @@ def _tmp_load_dataset(path, is_numeric):
 	le = preprocessing.LabelEncoder()		
 	y = le.fit_transform(y)
 
-	if is_numeric:	
+	if is_numeric:
 		X = data.drop(columns = [0]).values
 	else:
 		data = data.drop(columns = [0])
