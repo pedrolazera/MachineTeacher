@@ -145,3 +145,6 @@ class Timer:
 		other._curr_field = self._curr_field
 		other._t0_stop_time = self._t0_stop_time
 		other._t0_curr_field = self._t0_curr_field
+		other._state = self._state
+
+		return other

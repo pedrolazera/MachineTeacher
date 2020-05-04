@@ -29,6 +29,7 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path,
 	os.mkdir(new_folder_path)
 
 	TRs = []
+	all_TRs = []
 	for file_name in os.listdir(folder_path):
 		# ignore files that are not configuration files
 		if not _is_valid_configuration_file(file_name):
@@ -42,6 +43,7 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path,
 		
 		TRs_i = create_reports_from_configuration_file(file_path,
 			new_folder_path, verbose)
+		all_TRs = all_TRs + TRs_i
 		
 		# get average result
 		avg_TR = TRs_i[0]
@@ -53,7 +55,7 @@ def create_reports_from_configuration_folder(folder_path, dest_folder_path,
 
 	create_comparison_table_report(TRs, new_folder_path, _sufix)
 
-	return new_folder_path
+	return (new_folder_path, all_TRs)
 
 def create_reports_from_configuration_file(src_path: str,
 	dest_folder_path: str = None, verbose = False):
@@ -146,14 +148,14 @@ def create_report(TR: TeachResult, dest_folder_path: str) -> None:
 	_convert_teach_result_to_txt(TR, summary_file_path)
 
 	# create csv file
-	teacher_log_file_name = "teacher_log_{}.csv".format(_sufix)
-	teacher_log_file_path = os.path.join(new_folder_path,
-		teacher_log_file_name)
-	_convert_teacher_log_to_csv(TR.teacher_log, teacher_log_file_path)
+	log_file_name = "log_{}.csv".format(_sufix)
+	log_file_path = os.path.join(new_folder_path,
+		log_file_name)
+	_convert_log_to_csv(TR.log, log_file_path)
 
-	return (summary_file_path, teacher_log_file_path)
+	return (summary_file_path, log_file_path)
 
-def _convert_teacher_log_to_csv(log, path: str):
+def _convert_log_to_csv(log, path: str):
 	assert os.path.isdir(os.path.dirname(path))
 
 	with open(path, "w", newline='') as csv_file:

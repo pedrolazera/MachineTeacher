@@ -13,8 +13,8 @@ class RandomTeacher(Teacher):
 
 		assert 0 < batch_relative_size <= 1.0
 
-	def start(self, X, y):
-		self._start(X, y)
+	def start(self, X, y, time_left: float):
+		self._start(X, y, time_left)
 		self.iters = 0
 		self.m = y.size
 		self.batch_size = self._get_batch_size(self.m,
@@ -30,7 +30,7 @@ class RandomTeacher(Teacher):
 		else:
 			return True
 
-	def get_new_examples(self, test_ids, test_labels):
+	def get_new_examples(self, test_ids, test_labels, time_left: float):
 		assert len(test_labels) == self.m
 
 		if not self._keep_going():
@@ -47,7 +47,7 @@ class RandomTeacher(Teacher):
 		self._update_selected_ids(new_ids)
 		return new_ids
 
-	def get_first_examples(self):
+	def get_first_examples(self, time_left: float):
 		h_dumb = np.full(None, self.m)
 		return self.get_new_examples(h_dumb)
 

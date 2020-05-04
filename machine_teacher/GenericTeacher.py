@@ -7,31 +7,27 @@ from .Definitions import Labels
 class Teacher:
 	name = "GenericTeacher"
 
-	def start(self, X: InputSpace, y: Labels):
+	def start(self, X: InputSpace, y: Labels, time_left: float):
 		raise NotImplementedError
 
-	def get_first_examples(self) -> np.ndarray:
+	def get_first_examples(self, time_left: float) -> np.ndarray:
 		raise NotImplementedError
 
-	def get_new_examples(self, test_ids, test_labels: Labels) -> np.ndarray:
+	def get_new_examples(self, test_ids,
+		test_labels: Labels, time_left: float) -> np.ndarray:
 		raise NotImplementedError
 
-	def get_new_test_ids(self, test_ids, test_labels: Labels) -> np.ndarray:
+	def get_new_test_ids(self, test_ids,
+		test_labels: Labels, time_left: float) -> np.ndarray:
 		if len(test_ids) == 0:
 			return self.ids
 		else:
 			return []
 
-	def get_log_header(self):
-		return []
-
-	def get_log_line(self, h: Labels):
-		return []
-
 	def get_params(self) -> dict:
 		return dict()
 
-	def _start(self, X: InputSpace, y: Labels):
+	def _start(self, X: InputSpace, y: Labels, time_left: float):
 		self.X = X
 		self.y = y
 		self.ids = np.arange(y.size, dtype=int)

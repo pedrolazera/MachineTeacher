@@ -3,11 +3,11 @@ name = SingleBatchTeacher
 
 [learner]
 name = SVMLinearLearner
-random_state = [0,1,2,3,4]
+random_state = [0]
 dual = false
 
 [dataset]
-path = C:\Users\pedro\Google Drive\ensino\puc\mestrado\estudo dirigido\MachineTeacher\garagem\datasets\crowdsourced.csv
+path = C:\Users\pedro\Google Drive\ensino\puc\mestrado\estudo dirigido\MachineTeacher\garagem\datasets\mnist_train.csv
 is_numeric = yes
 
 [destination]

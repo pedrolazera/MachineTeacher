@@ -17,12 +17,12 @@ class DoubleTeacher(Teacher):
 		self.frac_start = frac_start
 		self.scale = scale
 
-	def start(self, X, y):
+	def start(self, X, y, time_left: float):
 		if self.scale:
 			warnings.warn("X is being scaled inplace!")
 			preprocessing.scale(X, copy = False)
 
-		self._start(X, y)
+		self._start(X, y, time_left)
 		self.num_iters = 0
 		self.m = y.size
 		self.S_current_size = 0
@@ -32,7 +32,7 @@ class DoubleTeacher(Teacher):
 	def _keep_going(self):
 		return self.S_current_size < self.m
 
-	def get_first_examples(self):
+	def get_first_examples(self, time_left: float):
 		classes = np.unique(self.y)
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
@@ -45,7 +45,7 @@ class DoubleTeacher(Teacher):
 
 		return self._send_new_ids(new_ids)
 
-	def get_new_examples(self, test_ids, test_labels):
+	def get_new_examples(self, test_ids, test_labels, time_left: float):
 		if not self._keep_going():
 			return np.array([])
 
@@ -55,7 +55,8 @@ class DoubleTeacher(Teacher):
 		self.batch_size *= 2
 		return self._send_new_ids(new_ids)
 
-	def get_new_test_ids(self, test_ids, test_labels) -> np.ndarray:
+	def get_new_test_ids(self, test_ids,
+		test_labels, time_left: float) -> np.ndarray:
 		return np.array([])
 
 	def get_log_header(self):

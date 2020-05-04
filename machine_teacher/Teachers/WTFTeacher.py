@@ -26,8 +26,8 @@ class WTFTeacher(Teacher):
 		assert 0.0 <= frac_start <= 1.0, "frac start most be in [0, 1]"
 		assert frac_start <= frac_stop <= 1.0, "frac start most be in [frac_start, 1]"
 
-	def start(self, X, y) -> None:
-		super()._start(X, y)
+	def start(self, X, y, time_left: float) -> None:
+		super()._start(X, y, time_left)
 
 		m = X.shape[_ROW_AXIS] # number of rows
 		self.m = m
@@ -52,14 +52,14 @@ class WTFTeacher(Teacher):
 		else:
 			return True
 
-	def get_first_examples(self):
+	def get_first_examples(self, time_left: float):
 		f_shuffle = np.random.RandomState(self.first_examples_seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
 			self.classes, self.y, f_shuffle)
 		new_ids = np.array(new_ids)
 		return self._send_new_ids(new_ids)
 
-	def get_new_examples(self, test_ids, test_labels):
+	def get_new_examples(self, test_ids, test_labels, time_left: float):
 		if not self._keep_going(test_labels):
 			return np.array([])
 

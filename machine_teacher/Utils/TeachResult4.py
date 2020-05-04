@@ -12,11 +12,12 @@ class TeachResult:
 	_DT_FORMAT = "%Y-%m-%d %H:%M"
 	_DATASET_STD_NAME = "???"
 
-	def __init__(self, T: Teacher, L: Learner,
-		S_ids, h: Labels, timer: Timer,
+	def __init__(self, teacher_name, learner_name,
+		teacher_params, learner_params,
+		S_ids, h: Labels, accuracy, timer: Timer,
 		qtd_iters: int,
 		qtd_attributes: int,
-		log,
+		teacher_log,
 		time_limit,
 		dataset_name: str = _DATASET_STD_NAME):
 
@@ -35,20 +36,20 @@ class TeachResult:
 			timer.total_time, # total_time
 			qtd_iters, # qtd_iters
 			len(S_ids), # teaching_set_size
-			T._get_accuracy(h), # accuracy,
+			accuracy, # accuracy,
 			timer["get_examples"], # get_examples_time
-			timer["training"], # training time
-			timer["classification"] # classification time,
+			timer["fit"], # fit time
+			timer["predict"] # predict time,
 			)
 		
 		self.timer = timer
 
 		# teacher info
-		self.log = log
-		self.teacher_params = copy(T.get_params())
+		self.teacher_log = teacher_log
+		self.teacher_params = teacher_params
 
 		# learner info
-		self.learner_params = copy(L.get_params())
+		self.learner_params = learner_params
 
 		# other stuff
 		self.date = datetime.today().strftime(self._DT_FORMAT)
@@ -73,7 +74,7 @@ class TeachResult:
  		new = deepcopy(self)
 
  		# Nones, things that does not make sense anymore
- 		new.log = None
+ 		new.teacher_log = None
  		new.teacher_params = dict()
  		new.learner_params = dict()
  		new.date = None
