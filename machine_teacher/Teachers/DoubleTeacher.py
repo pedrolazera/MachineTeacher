@@ -6,16 +6,20 @@ import warnings
 
 _SEED = 0
 _FRAC_START = 0.01
+_STRATEGY_DOUBLE_INCREMENT = 0
+_STRATEGY_DOUBLE_SIZE = 1
 
 class DoubleTeacher(Teacher):
 	name = "DoubleTeacher"
 
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		scale: bool = True):
+		scale: bool = True,
+		strategy: int = _STRATEGY_DOUBLE_INCREMENT):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.scale = scale
+		self.strategy = strategy
 
 	def start(self, X, y, time_left: float):
 		if self.scale:
@@ -42,6 +46,14 @@ class DoubleTeacher(Teacher):
 		# update shuffled_ids
 		_new_ids = set(new_ids)
 		self.shuffled_ids = [i for i in self.shuffled_ids if i not in _new_ids]
+
+		# update batch size, from 1 to len(new_ids), based on strategy
+		if self.strategy == _STRATEGY_DOUBLE_SIZE:
+			self.batch_size = len(new_ids)
+		elif self.strategy == _STRATEGY_DOUBLE_INCREMENT:
+			self.batch_size = 1
+		else:
+			raise ValueError("Estrategia desconhecida: " + str(self.strategy))
 
 		return self._send_new_ids(new_ids)
 

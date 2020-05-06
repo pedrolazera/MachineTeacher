@@ -1,6 +1,6 @@
 [teacher]
 name = Experiment2Teacher
-seed = [0,1,2,3,4]
+seed = [0,1,2]
 safity = 0.3
 scale = true
 frac_start = 0.002

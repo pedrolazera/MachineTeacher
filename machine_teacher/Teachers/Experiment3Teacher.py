@@ -6,6 +6,7 @@ from ..Utils.Timer import Timer
 _SEED = 0
 _FRAC_START = 0.01
 _FRAC_TIME_CHANGE = 1.0/4.0
+_STRATEGY_DOUBLE_SIZE = 1 # do DoubleTeacher
 
 class Experiment3Teacher(DoubleTeacher):
 	name = "Experiment3Teacher"
@@ -19,8 +20,9 @@ class Experiment3Teacher(DoubleTeacher):
 		seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		frac_time_change: float = _FRAC_TIME_CHANGE,
-		scale = True):
-		super().__init__(seed, frac_start, scale)
+		scale = True,
+		strategy: int = _STRATEGY_DOUBLE_SIZE):
+		super().__init__(seed, frac_start, scale, strategy)
 		self.safity = safity
 		self.frac_time_change = frac_time_change
 
@@ -33,6 +35,7 @@ class Experiment3Teacher(DoubleTeacher):
 		self.k = None
 		self.iters_t_ini = []
 		self.iters_t_fim = []
+		self.iters_n = []
 		self.time_limit = time_left
 		
 	def _keep_going(self):
@@ -52,7 +55,6 @@ class Experiment3Teacher(DoubleTeacher):
 
 		if self._state == self._STATE_DOUBLE_EXAMPLES:
 			self.iters_t_ini.append(self.time_limit - time_left)
-			self.batch_size = self.S_current_size
 			return super().get_new_examples(test_ids, test_labels, time_left)
 		elif self._state == self._STATE_GET_WRONG_EXAMPLES:
 			# get ids of missclassified examples
@@ -81,6 +83,7 @@ class Experiment3Teacher(DoubleTeacher):
 
 		if self._state == self._STATE_DOUBLE_EXAMPLES:
 			self.iters_t_fim.append(self.time_limit - time_left)
+			self.iters_n.append(self.S_current_size)
 			return np.array([])
 
 		if self._state == self._STATE_CHANGE_STRATEGY:
@@ -143,8 +146,10 @@ class Experiment3Teacher(DoubleTeacher):
 		#print("t0 =", t0)
 
 		# get sizes of last (n1) and prev last iters (n0)
-		n1 = self.S_current_size
-		n0 = n1 - 2**(self.num_iters-2)
+		#n1 = self.S_current_size
+		#n0 = n1 - 2**(self.num_iters-2)
+		n1 = self.iters_n[-1]
+		n0 = self.iters_n[-2]
 
 		#print("S_current_size", self.S_current_size)
 		#print("n1 =", n1)
