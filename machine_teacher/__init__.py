@@ -1,5 +1,4 @@
-#from .Protocol import teach
-from .Protocol import teach as teach
+from .Protocol import teach
 from . import Teachers
 from . import Learners
 from . import Reports

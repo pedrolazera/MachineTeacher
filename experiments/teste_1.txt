@@ -1,0 +1,11 @@
+Sensorless_drive_diagnosis.csv
+total_time = 650.602
+58509__treina = 159.722
+58509__classifica = 0.017
+1__treina = 160.789
+1__classifica = 3.672
+100__treina = 161.799
+100__classifica = 0.061
+292__treina = 162.553
+292__classifica = 0.035
+others_time = 1.956
