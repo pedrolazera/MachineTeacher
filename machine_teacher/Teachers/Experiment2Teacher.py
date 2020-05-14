@@ -62,8 +62,6 @@ class Experiment2Teacher(DoubleTeacher):
 			self._state = self._STATE_DONE
 
 			assert self.qtd_wrong_untrained_tested_examples == len(new_ids)
-
-			#print("qtd exemplos errados", len(new_ids))
 			
 			return self._send_new_ids(new_ids)
 
@@ -123,7 +121,7 @@ class Experiment2Teacher(DoubleTeacher):
 		""" Find (c,k) such that train(n) = c*n^k
 		k = log(t1/t0) / log(n1/n0)
 		c = t1 / (size_last_iter^k)
-		wherw...
+		where...
 		(i) t1 = time spent on last iter
 		(ii) t0 = time spent on prev last iter
 		(iii) n1 = qtd_examples of last iter
@@ -138,23 +136,14 @@ class Experiment2Teacher(DoubleTeacher):
 		assert t0 > 0
 		assert t1 > 0
 
-		#print("t1 =", t1)
-		#print("t0 =", t0)
-
 		# get sizes of last (n1) and prev last iters (n0)
 		n1 = self.S_current_size
 		n0 = n1 - 2**(self.num_iters-2)
-
-		#print("S_current_size", self.S_current_size)
-		#print("n1 =", n1)
-		#print("n0 = ", n0)
 
 		# get c and k
 		k = np.log2(t1/t0) / np.log2(n1/n0)
 		k = max(k, 0)
 		c = t1 / (n1 ** k)
-
-		#print("(c,k) =", (c,k))
 
 		return (c,k)
 

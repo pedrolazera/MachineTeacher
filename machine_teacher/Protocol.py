@@ -76,8 +76,6 @@ def teach(T: Teacher, L: Learner,
 	# other teaching interactions
 	qtd_iters = 0
 	while (get_time_left() > 0):
-		#print("debug", timer, len(train_ids), "time_limit: " + str(time_limit), sep="\n--\n")
-		#print("*******************")
 		# copy last "ok" state and build log line
 		qtd_iters += 1
 		timer.stop()
@@ -93,7 +91,6 @@ def teach(T: Teacher, L: Learner,
 		timer.unstop()
 
 		# run next iteration
-
 		timer.tick("classification")
 		test_ids, test_labels = _run_tests(T, L, X, get_time_left)
 		timer.tock()
@@ -106,16 +103,10 @@ def teach(T: Teacher, L: Learner,
 			timer.tick("training")
 			train_ids = np.append(train_ids, new_train_ids)
 
-			assert len(train_ids) <= get_qtd_rows(X) 
+			assert len(train_ids) <= get_qtd_rows(X)
 			
 			L.fit(X[train_ids], X_labels[train_ids])
 			timer.tock()
-
-			#print("----------")
-			#print(timer)
-			#print("> time_left =", get_time_left())
-			#print("> len(train_ids)", len(train_ids))
-			#print("----------")
 		else:
 			break
 
