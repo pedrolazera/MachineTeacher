@@ -110,6 +110,15 @@ def teach(T: Teacher, L: Learner,
 		else:
 			break
 
+	# adiciona ultima linha do log caso o último estado tenha sido revertido
+	if get_time_left() < 0:
+		timer.finish()
+		_log_line = (qtd_iters+1, len(train_ids), T._get_accuracy(L.predict(X)),
+			timer.get_elapsed_time(), timer["get_examples"],
+			timer["training"], timer["classification"],
+			len(test_ids))
+		log.append(_log_line)
+
 	# sanity checks
 	assert qtd_iters >= 1, "there was no training..." + str((T.name, L.name, dataset_name))
 	assert ok_timer is not None

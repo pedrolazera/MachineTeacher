@@ -1,5 +1,5 @@
 import numpy as np
-from . import DoubleTeacher
+from . import Experiment3Teacher
 from ..Utils.Sampler import get_first_examples
 from ..Utils.Timer import Timer
 
