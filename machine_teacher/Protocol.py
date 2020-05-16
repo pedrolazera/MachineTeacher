@@ -51,6 +51,9 @@ def teach(T: Teacher, L: Learner,
 	X = wrapp_input_space(X)
 	X_labels = wrapp_labels(X_labels)
 
+	# checks
+	assert len(np.unique(X_labels)) > 1 # tem que existir mais de uma classe no dataset
+
 	# start with empty set of <training example ids>
 	train_ids = np.array([], dtype=int)
 	ok_train_ids = None
@@ -123,6 +126,7 @@ def teach(T: Teacher, L: Learner,
 	assert qtd_iters >= 1, "there was no training..." + str((T.name, L.name, dataset_name))
 	assert ok_timer is not None
 	assert ok_train_ids is not None
+	assert len(ok_train_ids) == len(set(ok_train_ids))
 
 	L.fit(X[ok_train_ids], X_labels[ok_train_ids])
 	h = L.predict(X)

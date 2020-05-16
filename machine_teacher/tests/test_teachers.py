@@ -117,7 +117,7 @@ class CustomTeacherTest(unittest.TestCase):
 		L = _CustomLearner()
 
 		dum_X = [[1],[2],[3],[4],[5],[6]]
-		dum_y = [0,0,0,0,0,0]
+		dum_y = [0,0,0,0,0,1]
 
 		# 2 iteracoes
 		time_limit = 2.0
@@ -134,6 +134,11 @@ class CustomTeacherTest(unittest.TestCase):
 
 		self.assertEqual(res.main_infos.qtd_iters, 3)
 		self.assertTrue(res.main_infos.total_time, time_limit)
+
+class TestesDoubleTeacher(unittest.TestCase):
+	# testa se testa todos os exemplos quando o tempo permite
+	# testa se o shuffle está se comportando bem
+	pass
 
 class _CustomTeacher(machine_teacher.GenericTeacher.Teacher):
 	def __init__(self, sleep_time):

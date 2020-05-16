@@ -1,6 +1,12 @@
 import numpy as np
 
 def get_first_examples(prop, m, classes, y, shuffle_function):
+	"""
+	Seleciona uma amostra de prop*m exemplos, respeitando as restrições
+	(1) tem de haver pelo menos um exemplo de cada classe
+	(2) a distribuição de classes da amostra é igual à proporção de classes
+	do dataset, módulo arredondamentos
+	"""
 	new_ids = []
 	n_samples = prop*m
 	class_distribution = [0 for c in classes]
@@ -26,7 +32,7 @@ def get_first_examples(prop, m, classes, y, shuffle_function):
 		class_i = y[id_i]
 		if v_cont[class_i] < class_samples[class_i]:
 			new_ids.append(id_i)
-			cont+=1
+			cont += 1
 			v_cont[class_i] += 1
 		i+=1
 

@@ -65,8 +65,6 @@ class Experiment3Teacher(DoubleTeacher):
 			self._state = self._STATE_DONE
 
 			assert self.qtd_wrong_untrained_tested_examples == len(new_ids)
-
-			#print("qtd exemplos errados", len(new_ids))
 			
 			return self._send_new_ids(new_ids)
 
@@ -89,6 +87,7 @@ class Experiment3Teacher(DoubleTeacher):
 		if self._state == self._STATE_CHANGE_STRATEGY:
 			assert len(test_ids) == 0
 			self.iters_t_fim.append(self.time_limit - time_left)
+			self.iters_n.append(self.S_current_size)
 			self.qtd_wrong_untrained_tested_examples = 0
 			self.qtd_untrained_tested_examples = 0
 			self._state = self._STATE_GET_WRONG_EXAMPLES
@@ -101,6 +100,7 @@ class Experiment3Teacher(DoubleTeacher):
 
 		# check if is possible (there is time) to increase training set
 		new_test_id = self.S_current_size + self.qtd_untrained_tested_examples
+		new_test_id = self.shuffled_ids[new_test_id] # o double teacher embaralha referências
 		training_set_size = self.S_current_size + self.qtd_wrong_untrained_tested_examples
 		bool1 = new_test_id < len(self.y)
 		bool2 = self._increase_training_set(training_set_size, 1, time_left)
@@ -110,13 +110,12 @@ class Experiment3Teacher(DoubleTeacher):
 			return np.array([new_test_id])
 		else:
 			if self.qtd_wrong_untrained_tested_examples == 0:
-				#print("sem exemplos errados entre {} exemplos...".format(self.qtd_untrained_tested_examples))
 				self._state = self._STATE_DONE
 			return np.array([])
 
 	def _increase_training_set(self, training_set_size, increase_amount, time_left):
 		if self.c is None:
-			(self.c,self.k) = self._get_c_and_k()
+			(self.c, self.k) = self._get_c_and_k()
 
 		c,k = self.c, self.k
 		increased_training_set_size = training_set_size + increase_amount

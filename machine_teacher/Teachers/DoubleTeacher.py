@@ -15,7 +15,8 @@ class DoubleTeacher(Teacher):
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		scale: bool = True,
-		strategy: int = _STRATEGY_DOUBLE_INCREMENT):
+		strategy: int = _STRATEGY_DOUBLE_INCREMENT,
+		shuffle: bool = True):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.scale = scale
@@ -37,15 +38,18 @@ class DoubleTeacher(Teacher):
 		return self.S_current_size < self.m
 
 	def get_first_examples(self, time_left: float):
-		classes = np.unique(self.y)
+		classes = np.unique(self.y) # isso devia sair. devia ser computado for get_first_examples
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		new_ids = get_first_examples(self.frac_start, self.m,
 			classes, self.y, f_shuffle)
 		new_ids = np.array(new_ids)
 		
-		# update shuffled_ids
+		# update shuffled_ids. Aqui usamos ponteiros de ponteiros.
+		# debugue as próximas duas linhas de cabeça vazia
 		_new_ids = set(new_ids)
-		self.shuffled_ids = [i for i in self.shuffled_ids if i not in _new_ids]
+		self.shuffled_ids = np.append(new_ids,
+							          [i for i in self.shuffled_ids if i not in _new_ids])
+		self.unshuffled_ids = self._get_reverse_map(self.shuffled_ids)
 
 		# update batch size, from 1 to len(new_ids), based on strategy
 		if self.strategy == _STRATEGY_DOUBLE_SIZE:
@@ -89,3 +93,17 @@ class DoubleTeacher(Teacher):
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		f_shuffle(ids)
 		return ids
+
+	#def _reordena_ids(self, ids, ids_ids_left):
+	#	_set_ids_left = set(ids_ids_left)
+	#	ids_left = ids[ids_ids_left]
+	#	ids_ids_right = np.array([i for i in range(len(ids)) if i not in _set_ids_left])
+	#	ids_right = ids[ids_ids_right]
+	#	ids_reordenado = np.append(ids_left, ids_right)
+	#	return ids_reordenado
+
+	def _get_reverse_map(self, v):
+		v2 = np.zeros(len(v), dtype = v.dtype)
+		for (i, vi) in enumerate(v):
+			v2[vi] = i
+		return v2

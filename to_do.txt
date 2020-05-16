@@ -15,3 +15,4 @@
 - [16/mar] arquivo conf: eliminar paths absolutos
 - [20/mar] fazer teachers que rodam atingir um tempo limite [sera que o protocolo deveria cuidar disso?]
 - [20/mar] fazer teachers que rodam até atingir uma certa acurácia
+- [16/maio] fazer testes unitários para DoubleTeacher
