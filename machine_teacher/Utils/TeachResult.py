@@ -16,8 +16,10 @@ class TeachResult:
 		S_ids, h: Labels, timer: Timer,
 		qtd_iters: int,
 		qtd_attributes: int,
-		log,
-		time_limit,
+		log, # vetor de linhas do log, cada linha é o estado de uma iteração
+		time_limit: float,
+		qtd_classes: int,
+		dist_classes, # vetor com a qtd de cada classe
 		dataset_name: str = _DATASET_STD_NAME):
 
 		# output
@@ -31,6 +33,8 @@ class TeachResult:
 			dataset_name, # dataset_name
 			len(h), #"dataset_qtd_examples"
 			qtd_attributes, # qtd_attributes
+			qtd_classes, # qtd_classes
+			dist_classes, # dist_classes
 			time_limit, # time_limit
 			timer.total_time, # total_time
 			qtd_iters, # qtd_iters
@@ -97,7 +101,8 @@ class TeachResult:
 class _MainInfos:
 	def __init__(self, teacher_name: str, learner_name: str,
 		dataset_name: str, dataset_qtd_examples: int,
-		qtd_attributes: int, time_limit: float, total_time: float,
+		qtd_attributes: int, qtd_classes: int, dist_classes,
+		time_limit: float, total_time: float,
 		qtd_iters: int, 
 		teaching_set_size: int, accuracy: float,
 		get_examples_time: float, training_time: float, classification_time: float):
@@ -106,6 +111,8 @@ class _MainInfos:
 		self.dataset_name = dataset_name
 		self.dataset_qtd_examples = dataset_qtd_examples
 		self.qtd_attributes = qtd_attributes
+		self.qtd_classes = qtd_classes
+		self.dist_classes = dist_classes
 		self.time_limit = time_limit
 
 		self.total_time = total_time
@@ -120,6 +127,7 @@ class _MainInfos:
 	def get_header():
 		return ["teacher_name", "learner_name", "dataset_name",
 			"dataset_qtd_examples", "dataset_qtd_attributes",
+			"dataset_qtd_classes", "dataset_dist_classes",
 			"time_limit", "total_time", "qtd_iters",
 			"teaching_set_size", "accuracy",
 			"get_examples_time", "training_time", "classification_time"]
@@ -127,7 +135,8 @@ class _MainInfos:
 	def get_infos_list(self):
 		return [self.teacher_name, self.learner_name,
 			self.dataset_name, self.dataset_qtd_examples,
-			self.qtd_attributes, self.time_limit, self.total_time, 
+			self.qtd_attributes, self.qtd_classes, self.dist_classes,
+			self.time_limit, self.total_time, 
 			self.qtd_iters, self.teaching_set_size, self.accuracy,
 			self.get_examples_time, self.training_time, self.classification_time]
 
@@ -137,6 +146,8 @@ class _MainInfos:
 		assert self.dataset_name == other.dataset_name
 		assert self.dataset_qtd_examples == other.dataset_qtd_examples
 		assert self.qtd_attributes == other.qtd_attributes
+		assert self.qtd_classes == other.qtd_classes
+		assert self.dist_classes == other.dist_classes
 		assert isclose(self.time_limit, other.time_limit)
 
 		new = deepcopy(self)
@@ -174,14 +185,16 @@ class _MainInfos:
 		_v.append("dataset: {}".format(self.dataset_name))
 		_v.append("dataset qtd examples: {}".format(self.dataset_qtd_examples))
 		_v.append("qtd attributes: {}".format(self.qtd_attributes))
-		_v.append("time_limit {:.3f}".format(self.time_limit))
-		_v.append("total_time: {:.3f}".format(self.total_time))
+		_v.append("qtd classes: {}".format(self.qtd_classes))
+		_v.append("dist classes: {}".format(self.dist_classes))
+		_v.append("time limit {:.3f}".format(self.time_limit))
+		_v.append("total time: {:.3f}".format(self.total_time))
 		_v.append("qtd iters: {}".format(self.qtd_iters))
 		_v.append("teaching set size: {}".format(self.teaching_set_size))
 		_v.append("accuracy: {:.3f}".format(self.accuracy))
-		_v.append("get_examples_time: {:.3f}".format(self.get_examples_time))
-		_v.append("training_time: {:.3f}".format(self.training_time))
-		_v.append("classification_time: {:.3f}".format(self.classification_time))
+		_v.append("get examples time: {:.3f}".format(self.get_examples_time))
+		_v.append("training time: {:.3f}".format(self.training_time))
+		_v.append("classification time: {:.3f}".format(self.classification_time))
 
 		return "\n".join(_v)
 

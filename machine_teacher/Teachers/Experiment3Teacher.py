@@ -21,8 +21,9 @@ class Experiment3Teacher(DoubleTeacher):
 		frac_start: float = _FRAC_START,
 		frac_time_change: float = _FRAC_TIME_CHANGE,
 		scale = True,
-		strategy: int = _STRATEGY_DOUBLE_SIZE):
-		super().__init__(seed, frac_start, scale, strategy)
+		strategy: int = _STRATEGY_DOUBLE_SIZE,
+		shuffle: bool = True):
+		super().__init__(seed, frac_start, scale, strategy, shuffle)
 		self.safity = safity
 		self.frac_time_change = frac_time_change
 
@@ -100,12 +101,12 @@ class Experiment3Teacher(DoubleTeacher):
 
 		# check if is possible (there is time) to increase training set
 		new_test_id = self.S_current_size + self.qtd_untrained_tested_examples
-		new_test_id = self.shuffled_ids[new_test_id] # o double teacher embaralha referências
 		training_set_size = self.S_current_size + self.qtd_wrong_untrained_tested_examples
 		bool1 = new_test_id < len(self.y)
 		bool2 = self._increase_training_set(training_set_size, 1, time_left)
 
 		if bool1 and bool2:
+			new_test_id = self.shuffled_ids[new_test_id] # o double teacher embaralha referências
 			self.qtd_untrained_tested_examples += 1
 			return np.array([new_test_id])
 		else:

@@ -20,7 +20,7 @@ _TIMER_KEYS = ("training", "classification", "get_examples")
 
 _HEADER = ("iter", "TS_size", "accuracy", "elapsed_time",
 	"get_examples_time", "training_time", "classification_time",
-	"qtd_classified_examples")
+	"qtd_classified_examples", "qtd_classes", "dist_classes")
 
 _TIME_LIMIT = 1000000000.0 # in seconds
 
@@ -53,6 +53,7 @@ def teach(T: Teacher, L: Learner,
 
 	# checks
 	assert len(np.unique(X_labels)) > 1 # tem que existir mais de uma classe no dataset
+	assert np.min(X_labels) == 0
 
 	# start with empty set of <training example ids>
 	train_ids = np.array([], dtype=int)
@@ -86,10 +87,13 @@ def teach(T: Teacher, L: Learner,
 		ok_timer.finish()
 		ok_train_ids = train_ids[:]
 		_accuracy = T._get_accuracy(L.predict(X))
+		_qtd_classes_iter = len(np.unique(X_labels[ok_train_ids]))
+		_dist_classes_iter = np.bincount(X_labels[ok_train_ids])
+		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(X_labels)) for i in _dist_classes_iter])
 		_log_line = (qtd_iters, len(ok_train_ids), _accuracy,
 			ok_timer.get_elapsed_time(), ok_timer["get_examples"],
 			ok_timer["training"], ok_timer["classification"],
-			len(test_ids))
+			len(test_ids), _qtd_classes_iter, _dist_classes_iter)
 		log.append(_log_line)
 		timer.unstop()
 
@@ -116,10 +120,13 @@ def teach(T: Teacher, L: Learner,
 	# adiciona ultima linha do log caso o último estado tenha sido revertido
 	if get_time_left() < 0:
 		timer.finish()
+		_qtd_classes_iter = len(np.unique(X_labels[train_ids]))
+		_dist_classes_iter = np.bincount(X_labels[train_ids])
+		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(X_labels)) for i in _dist_classes_iter])
 		_log_line = (qtd_iters+1, len(train_ids), T._get_accuracy(L.predict(X)),
 			timer.get_elapsed_time(), timer["get_examples"],
 			timer["training"], timer["classification"],
-			len(test_ids))
+			len(test_ids), _qtd_classes_iter, _dist_classes_iter)
 		log.append(_log_line)
 
 	# sanity checks
@@ -128,11 +135,18 @@ def teach(T: Teacher, L: Learner,
 	assert ok_train_ids is not None
 	assert len(ok_train_ids) == len(set(ok_train_ids))
 
+	# monta o teaching result
+	# # hipótese final do learner
 	L.fit(X[ok_train_ids], X_labels[ok_train_ids])
 	h = L.predict(X)
 
+	# # qtd classes e distribuicao das classes
+	qtd_classes = len(np.unique(X_labels))
+	dist_classes = np.bincount(X_labels)
+	dist_classes = ",".join(["{:.2f}".format(i/len(X_labels)) for i in dist_classes])
+
 	return TeachResult(T, L, ok_train_ids, h, ok_timer, qtd_iters,
-		get_qtd_columns(X), log, time_limit, dataset_name)
+		get_qtd_columns(X), log, time_limit, qtd_classes, dist_classes, dataset_name)
 
 def _run_tests(T: Teacher, L: Learner,
 	X: InputSpace, get_time_left):

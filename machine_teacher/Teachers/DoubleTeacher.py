@@ -21,6 +21,7 @@ class DoubleTeacher(Teacher):
 		self.frac_start = frac_start
 		self.scale = scale
 		self.strategy = strategy
+		self.shuffle = shuffle
 
 	def start(self, X, y, time_left: float):
 		if self.scale:
@@ -31,8 +32,14 @@ class DoubleTeacher(Teacher):
 		self.num_iters = 0
 		self.m = y.size
 		self.S_current_size = 0
-		self.shuffled_ids = self._get_shuffled_ids()
 		self.batch_size = 1
+		
+		if self.shuffle:
+			self.shuffled_ids = self._get_shuffled_ids()
+		else:
+			self.shuffle_ids = np.arange(self.m, dtype=int)
+
+		assert len(self.shuffled_ids) == len(self.ids)
 		
 	def _keep_going(self):
 		return self.S_current_size < self.m
