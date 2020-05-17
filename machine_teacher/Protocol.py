@@ -20,7 +20,7 @@ _TIMER_KEYS = ("training", "classification", "get_examples")
 
 _HEADER = ("iter", "TS_size", "accuracy", "elapsed_time",
 	"get_examples_time", "training_time", "classification_time",
-	"qtd_classified_examples", "qtd_classes", "dist_classes")
+	"qtd_classified_examples", "TS_qtd_classes", "TS_dist_classes")
 
 _TIME_LIMIT = 1000000000.0 # in seconds
 
@@ -89,7 +89,7 @@ def teach(T: Teacher, L: Learner,
 		_accuracy = T._get_accuracy(L.predict(X))
 		_qtd_classes_iter = len(np.unique(X_labels[ok_train_ids]))
 		_dist_classes_iter = np.bincount(X_labels[ok_train_ids])
-		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(X_labels)) for i in _dist_classes_iter])
+		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(ok_train_ids)) for i in _dist_classes_iter])
 		_log_line = (qtd_iters, len(ok_train_ids), _accuracy,
 			ok_timer.get_elapsed_time(), ok_timer["get_examples"],
 			ok_timer["training"], ok_timer["classification"],
@@ -122,7 +122,7 @@ def teach(T: Teacher, L: Learner,
 		timer.finish()
 		_qtd_classes_iter = len(np.unique(X_labels[train_ids]))
 		_dist_classes_iter = np.bincount(X_labels[train_ids])
-		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(X_labels)) for i in _dist_classes_iter])
+		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(train_ids)) for i in _dist_classes_iter])
 		_log_line = (qtd_iters+1, len(train_ids), T._get_accuracy(L.predict(X)),
 			timer.get_elapsed_time(), timer["get_examples"],
 			timer["training"], timer["classification"],

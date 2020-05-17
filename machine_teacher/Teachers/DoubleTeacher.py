@@ -4,13 +4,12 @@ from ..Utils.Sampler import get_first_examples
 from sklearn import preprocessing
 import warnings
 
-_SEED = 0
-_FRAC_START = 0.01
-_STRATEGY_DOUBLE_INCREMENT = 0
-_STRATEGY_DOUBLE_SIZE = 1
-
 class DoubleTeacher(Teacher):
 	name = "DoubleTeacher"
+	_SEED = 0
+	_FRAC_START = 0.01
+	_STRATEGY_DOUBLE_INCREMENT = 0
+	_STRATEGY_DOUBLE_SIZE = 1
 
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
@@ -56,12 +55,12 @@ class DoubleTeacher(Teacher):
 		_new_ids = set(new_ids)
 		self.shuffled_ids = np.append(new_ids,
 							          [i for i in self.shuffled_ids if i not in _new_ids])
-		self.unshuffled_ids = self._get_reverse_map(self.shuffled_ids)
+		#self.unshuffled_ids = self._get_reverse_map(self.shuffled_ids)
 
 		# update batch size, from 1 to len(new_ids), based on strategy
-		if self.strategy == _STRATEGY_DOUBLE_SIZE:
+		if self.strategy == self._STRATEGY_DOUBLE_SIZE:
 			self.batch_size = len(new_ids)
-		elif self.strategy == _STRATEGY_DOUBLE_INCREMENT:
+		elif self.strategy == self._STRATEGY_DOUBLE_INCREMENT:
 			self.batch_size = 1
 		else:
 			raise ValueError("Estrategia desconhecida: " + str(self.strategy))
@@ -109,8 +108,8 @@ class DoubleTeacher(Teacher):
 	#	ids_reordenado = np.append(ids_left, ids_right)
 	#	return ids_reordenado
 
-	def _get_reverse_map(self, v):
-		v2 = np.zeros(len(v), dtype = v.dtype)
-		for (i, vi) in enumerate(v):
-			v2[vi] = i
-		return v2
+	#def _get_reverse_map(self, v):
+	#	v2 = np.zeros(len(v), dtype = v.dtype)
+	#	for (i, vi) in enumerate(v):
+	#		v2[vi] = i
+	#	return v2

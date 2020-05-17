@@ -3,13 +3,14 @@ from . import DoubleTeacher
 from ..Utils.Sampler import get_first_examples
 from ..Utils.Timer import Timer
 
-_SEED = 0
-_FRAC_START = 0.01
-_FRAC_TIME_CHANGE = 1.0/4.0
-_STRATEGY_DOUBLE_SIZE = 1 # do DoubleTeacher
-
 class Experiment3Teacher(DoubleTeacher):
 	name = "Experiment3Teacher"
+	_SEED = 0
+	_FRAC_START = 0.01
+	_FRAC_TIME_CHANGE = 1.0/4.0
+	_STRATEGY_DOUBLE_SIZE = DoubleTeacher._STRATEGY_DOUBLE_SIZE # do DoubleTeacher
+
+	# estados
 	_STATE_DOUBLE_EXAMPLES = 0
 	_STATE_CHANGE_STRATEGY = 1
 	_STATE_GET_WRONG_EXAMPLES = 2

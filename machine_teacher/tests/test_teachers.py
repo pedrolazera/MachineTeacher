@@ -135,11 +135,6 @@ class CustomTeacherTest(unittest.TestCase):
 		self.assertEqual(res.main_infos.qtd_iters, 3)
 		self.assertTrue(res.main_infos.total_time, time_limit)
 
-class TestesDoubleTeacher(unittest.TestCase):
-	# testa se testa todos os exemplos quando o tempo permite
-	# testa se o shuffle está se comportando bem
-	pass
-
 class _CustomTeacher(machine_teacher.GenericTeacher.Teacher):
 	def __init__(self, sleep_time):
 		self.sleep_time = sleep_time
