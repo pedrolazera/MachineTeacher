@@ -6,4 +6,4 @@ from .RandomTeacher import RandomTeacher
 #from .Experiment1Teacher import Experiment1Teacher
 from .Experiment2Teacher import Experiment2Teacher
 from .Experiment3Teacher import Experiment3Teacher
-from .Experiment3Teacher import Experiment5Teacher
+from .Experiment5Teacher import Experiment5Teacher
