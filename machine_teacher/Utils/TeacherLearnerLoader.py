@@ -15,8 +15,6 @@ _D_TEACHERS = {
 	Teachers.WTFTeacher.name: Teachers.WTFTeacher,
 	Teachers.SingleBatchTeacher.name: Teachers.SingleBatchTeacher,
 	Teachers.DoubleTeacher.name: Teachers.DoubleTeacher,
-	#Teachers.Experiment1Teacher.name: Teachers.Experiment1Teacher,
-	Teachers.Experiment2Teacher.name: Teachers.Experiment2Teacher,
 	Teachers.Experiment3Teacher.name: Teachers.Experiment3Teacher,
 }
 

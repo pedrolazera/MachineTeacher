@@ -14,13 +14,11 @@ class DoubleTeacher(Teacher):
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		scale: bool = True,
-		strategy: int = _STRATEGY_DOUBLE_INCREMENT,
-		shuffle: bool = True):
+		strategy: int = _STRATEGY_DOUBLE_INCREMENT):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.scale = scale
 		self.strategy = strategy
-		self.shuffle = shuffle
 
 	def start(self, X, y, time_left: float):
 		if self.scale:
@@ -33,10 +31,7 @@ class DoubleTeacher(Teacher):
 		self.S_current_size = 0
 		self.batch_size = 1
 		
-		if self.shuffle:
-			self.shuffled_ids = self._get_shuffled_ids()
-		else:
-			self.shuffle_ids = np.arange(self.m, dtype=int)
+		self.shuffled_ids = self._get_shuffled_ids()
 
 		assert len(self.shuffled_ids) == len(self.ids)
 		
@@ -99,17 +94,3 @@ class DoubleTeacher(Teacher):
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		f_shuffle(ids)
 		return ids
-
-	#def _reordena_ids(self, ids, ids_ids_left):
-	#	_set_ids_left = set(ids_ids_left)
-	#	ids_left = ids[ids_ids_left]
-	#	ids_ids_right = np.array([i for i in range(len(ids)) if i not in _set_ids_left])
-	#	ids_right = ids[ids_ids_right]
-	#	ids_reordenado = np.append(ids_left, ids_right)
-	#	return ids_reordenado
-
-	#def _get_reverse_map(self, v):
-	#	v2 = np.zeros(len(v), dtype = v.dtype)
-	#	for (i, vi) in enumerate(v):
-	#		v2[vi] = i
-	#	return v2

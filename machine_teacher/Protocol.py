@@ -18,9 +18,9 @@ from .Definitions import get_qtd_rows
 
 _TIMER_KEYS = ("training", "classification", "get_examples")
 
-_HEADER = ("iter", "TS_size", "accuracy", "elapsed_time",
+_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time",
 	"get_examples_time", "training_time", "classification_time",
-	"qtd_classified_examples", "TS_qtd_classes", "TS_dist_classes")
+	"qtd_classified_examples", "TS_qtd_classes", "TS_class_distribution")
 
 _TIME_LIMIT = 1000000000.0 # in seconds
 
@@ -86,14 +86,8 @@ def teach(T: Teacher, L: Learner,
 		ok_timer = copy(timer)
 		ok_timer.finish()
 		ok_train_ids = train_ids[:]
-		_accuracy = T._get_accuracy(L.predict(X))
-		_qtd_classes_iter = len(np.unique(X_labels[ok_train_ids]))
-		_dist_classes_iter = np.bincount(X_labels[ok_train_ids])
-		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(ok_train_ids)) for i in _dist_classes_iter])
-		_log_line = (qtd_iters, len(ok_train_ids), _accuracy,
-			ok_timer.get_elapsed_time(), ok_timer["get_examples"],
-			ok_timer["training"], ok_timer["classification"],
-			len(test_ids), _qtd_classes_iter, _dist_classes_iter)
+		_log_line = _get_log_line(L, X, X_labels, ok_train_ids,
+			test_ids, ok_timer, qtd_iters)
 		log.append(_log_line)
 		timer.unstop()
 
@@ -120,13 +114,8 @@ def teach(T: Teacher, L: Learner,
 	# adiciona ultima linha do log caso o último estado tenha sido revertido
 	if get_time_left() < 0:
 		timer.finish()
-		_qtd_classes_iter = len(np.unique(X_labels[train_ids]))
-		_dist_classes_iter = np.bincount(X_labels[train_ids])
-		_dist_classes_iter = ",".join(["{:.2f}".format(i/len(train_ids)) for i in _dist_classes_iter])
-		_log_line = (qtd_iters+1, len(train_ids), T._get_accuracy(L.predict(X)),
-			timer.get_elapsed_time(), timer["get_examples"],
-			timer["training"], timer["classification"],
-			len(test_ids), _qtd_classes_iter, _dist_classes_iter)
+		_log_line = _get_log_line(L, X, X_labels, train_ids,
+								  test_ids, timer, qtd_iters+1)
 		log.append(_log_line)
 
 	# sanity checks
@@ -140,10 +129,8 @@ def teach(T: Teacher, L: Learner,
 	L.fit(X[ok_train_ids], X_labels[ok_train_ids])
 	h = L.predict(X)
 
-	# # qtd classes e distribuicao das classes
-	qtd_classes = len(np.unique(X_labels))
-	dist_classes = np.bincount(X_labels)
-	dist_classes = ",".join(["{:.2f}".format(i/len(X_labels)) for i in dist_classes])
+	# # qtd classes e distribuicao das classes no dataset
+	qtd_classes, dist_classes = _get_class_qtd_and_distribution(X_labels)
 
 	return TeachResult(T, L, ok_train_ids, h, ok_timer, qtd_iters,
 		get_qtd_columns(X), log, time_limit, qtd_classes, dist_classes, dataset_name)
@@ -166,7 +153,40 @@ def _run_tests(T: Teacher, L: Learner,
 
 	return (test_ids, test_labels)
 
+def _get_log_line(L: Learner,
+	X: InputSpace, X_labels: Labels,
+	train_ids, test_ids, timer, qtd_iters):
+	accuracy = _get_accuracy(L.predict(X), X_labels)
+	qtd_classes, dist_classes = _get_class_qtd_and_distribution(X_labels[train_ids])
+
+	log_line = (
+		qtd_iters,
+		len(train_ids),
+		accuracy,
+		timer.get_elapsed_time(),
+		timer["get_examples"],
+		timer["training"],
+		timer["classification"],
+		len(test_ids),
+		qtd_classes,
+		dist_classes
+	)
+
+	return log_line
+
+def _get_class_qtd_and_distribution(labels):
+	qtd_classes = len(np.unique(labels))
+	dist_classes = np.bincount(labels) / len(labels)
+	dist_classes = ",".join("{:.2f}".format(i) for i in dist_classes)
+	return (qtd_classes, dist_classes)
+
 def _set_timer_keys_to_zero(timer, keys):
 	for key in keys:
 		timer.tick(key)
 		timer.tock()
+
+def _get_accuracy(y, h):
+	assert len(y) == len(h)
+	qtd_wrong_labels = np.count_nonzero(y != h)
+	accuracy = 1 - qtd_wrong_labels / len(y)
+	return accuracy
