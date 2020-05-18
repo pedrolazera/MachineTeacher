@@ -161,10 +161,14 @@ def _parse_learner_section(section):
 
 def _parse_dataset_section(section):
 	assert 'path' in section
-	assert 'is_numeric' in section
+	#assert 'is_numeric' in section
 
 	path = _parse_string(section['path'])
-	is_numeric = _parse_boolean(section['is_numeric'])
+
+	if "is_numeric" in section:
+		is_numeric = _parse_boolean(section['is_numeric'])
+	else:
+		is_numeric = None
 
 	return (path, is_numeric)
 
