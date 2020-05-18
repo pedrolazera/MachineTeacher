@@ -5,14 +5,13 @@
 - [OK] [09/mar] relatórios: criar relatório resumo (data, nome do learner, nome do teacher, estatisticas do dataset, estatisticas do resultado final de classificacao e treino, tempos)
 - [OK] [11/mar] testes: entender por que com seed = 1 o PacTeacher antigo nao roda direito
 - [OK] [14/mar] summary: colocar data no summary do experimento
+- [OK] [16/maio] fazer testes unitários para DoubleTeacher
+- [OK] [14/mar] testes: pensar em experimentos que fazem o mesmo teste N vezes. Ideia: somar teacher results! somar timers!
+- [OK] [16/mar] arquivo conf: eliminar paths absolutos
+- [OK] [20/mar] fazer teachers que rodam atingir um tempo limite [sera que o protocolo deveria cuidar disso?]
+- [OK] [09/mar] tirar "self.n *= 2" do WTFTeacher._get_new_weights()
+- [OK] [10/mar] testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
 
-
-- [09/mar] tirar "self.n *= 2" do WTFTeacher._get_new_weights()
-- [10/mar] testes: criar testes unitários! pedir na próxima reunião ideiais para testes unitários
 - [11/mar] documentar: documentar funcoes
 - [11/mar] documentar: criar readme para o projeto
-- [14/mar] testes: pensar em experimentos que fazem o mesmo teste N vezes. Ideia: somar teacher results! somar timers!
-- [16/mar] arquivo conf: eliminar paths absolutos
-- [20/mar] fazer teachers que rodam atingir um tempo limite [sera que o protocolo deveria cuidar disso?]
 - [20/mar] fazer teachers que rodam até atingir uma certa acurácia
-- [16/maio] fazer testes unitários para DoubleTeacher
