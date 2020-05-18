@@ -24,7 +24,7 @@ class Experiment3Teacher(DoubleTeacher):
 		scale = True,
 		strategy: int = _STRATEGY_DOUBLE_SIZE,
 		shuffle: bool = True):
-		super().__init__(seed, frac_start, scale, strategy, shuffle)
+		super().__init__(seed, frac_start, scale, strategy)
 		self.safity = safity
 		self.frac_time_change = frac_time_change
 
