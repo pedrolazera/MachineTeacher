@@ -18,7 +18,7 @@ from .Definitions import get_qtd_rows
 
 _TIMER_KEYS = ("training", "classification", "get_examples")
 
-_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time",
+_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time", "time_left",
 	"get_examples_time", "training_time", "classification_time",
 	"qtd_classified_examples", "TS_qtd_classes", "TS_class_distribution")
 
@@ -87,7 +87,7 @@ def teach(T: Teacher, L: Learner,
 		ok_timer.finish()
 		ok_train_ids = train_ids[:]
 		_log_line = _get_log_line(L, X, X_labels, ok_train_ids,
-			test_ids, ok_timer, qtd_iters)
+			test_ids, ok_timer, get_time_left(), qtd_iters)
 		log.append(_log_line)
 		timer.unstop()
 
@@ -115,7 +115,7 @@ def teach(T: Teacher, L: Learner,
 	if get_time_left() < 0:
 		timer.finish()
 		_log_line = _get_log_line(L, X, X_labels, train_ids,
-								  test_ids, timer, qtd_iters+1)
+								  test_ids, timer, get_time_left(), qtd_iters+1)
 		log.append(_log_line)
 
 	# sanity checks
@@ -155,7 +155,7 @@ def _run_tests(T: Teacher, L: Learner,
 
 def _get_log_line(L: Learner,
 	X: InputSpace, X_labels: Labels,
-	train_ids, test_ids, timer, qtd_iters):
+	train_ids, test_ids, timer, time_left, qtd_iters):
 	accuracy = _get_accuracy(L.predict(X), X_labels)
 	qtd_classes, dist_classes = _get_class_qtd_and_distribution(X_labels[train_ids])
 
@@ -164,6 +164,7 @@ def _get_log_line(L: Learner,
 		len(train_ids),
 		accuracy,
 		timer.get_elapsed_time(),
+		time_left,
 		timer["get_examples"],
 		timer["training"],
 		timer["classification"],
