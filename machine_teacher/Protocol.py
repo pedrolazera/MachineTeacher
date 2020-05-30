@@ -20,7 +20,7 @@ _TIMER_KEYS = ("training", "classification", "get_examples")
 
 _HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time", "time_left",
 	"get_examples_time", "training_time", "classification_time",
-	"qtd_classified_examples", "TS_qtd_classes", "TS_class_distribution")
+	"qtd_classified_examples", "TS_qtd_classes", "TS_class_distribution", "validation_set_accuracy")
 
 _TIME_LIMIT = 1000000000.0 # in seconds
 
@@ -28,7 +28,8 @@ _SHUFFLE_RANDOM_STATE = 0
 _SHUFFLE_DATASET = False
 
 def teach(T: Teacher, L: Learner,
-	X: InputSpace, X_labels: Labels, *,
+	X: InputSpace, X_labels: Labels, 
+	X_validation: InputSpace = None, X_validation_labels: Labels = None, *,
 	dataset_name = TeachResult._DATASET_STD_NAME,
 	time_limit = _TIME_LIMIT,
 	shuffle_dataset = _SHUFFLE_DATASET,
@@ -86,8 +87,8 @@ def teach(T: Teacher, L: Learner,
 		ok_timer = copy(timer)
 		ok_timer.finish()
 		ok_train_ids = train_ids[:]
-		_log_line = _get_log_line(L, X, X_labels, ok_train_ids,
-			test_ids, ok_timer, get_time_left(), qtd_iters)
+		_log_line = _get_log_line(L, X, X_labels, X_validation, X_validation_labels, 
+			ok_train_ids, test_ids, ok_timer, get_time_left(), qtd_iters)
 		log.append(_log_line)
 		timer.unstop()
 
@@ -114,7 +115,7 @@ def teach(T: Teacher, L: Learner,
 	# adiciona ultima linha do log caso o último estado tenha sido revertido
 	if get_time_left() < 0:
 		timer.finish()
-		_log_line = _get_log_line(L, X, X_labels, train_ids,
+		_log_line = _get_log_line(L, X, X_labels, X_validation, X_validation_labels, train_ids,
 								  test_ids, timer, get_time_left(), qtd_iters+1)
 		log.append(_log_line)
 
@@ -154,10 +155,16 @@ def _run_tests(T: Teacher, L: Learner,
 	return (test_ids, test_labels)
 
 def _get_log_line(L: Learner,
-	X: InputSpace, X_labels: Labels,
+	X: InputSpace, X_labels: Labels, 
+	X_validation: InputSpace, X_validation_labels: Labels,
 	train_ids, test_ids, timer, time_left, qtd_iters):
 	accuracy = _get_accuracy(L.predict(X), X_labels)
 	qtd_classes, dist_classes = _get_class_qtd_and_distribution(X_labels[train_ids])
+	
+	if X_validation is not None:
+		validation_set_accuracy = _get_accuracy(L.predict(X_validation), X_validation_labels)
+	else:
+		validation_set_accuracy = '-'
 
 	log_line = (
 		qtd_iters,
@@ -170,7 +177,8 @@ def _get_log_line(L: Learner,
 		timer["classification"],
 		len(test_ids),
 		qtd_classes,
-		dist_classes
+		dist_classes,
+		validation_set_accuracy
 	)
 
 	return log_line

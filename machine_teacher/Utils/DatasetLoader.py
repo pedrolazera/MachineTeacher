@@ -25,6 +25,7 @@ def _get_is_numeric(dataset_name):
 		"Electrical_grid_stability_simulated_data.csv": True,
 		"HTRU.csv": True,
 		"mnist_train.csv": True,
+		"mnist_test.csv": True,
 		"nursery.csv": False,
 		"poker_hand_train.csv": False,
 		"Sensorless_drive_diagnosis.csv": True,
