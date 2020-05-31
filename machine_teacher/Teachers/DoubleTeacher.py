@@ -94,3 +94,11 @@ class DoubleTeacher(Teacher):
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		f_shuffle(ids)
 		return ids
+
+	def get_params(self) -> dict:
+		return {
+			"seed": self.seed,
+			"frac_start": self.frac_start,
+			"scale": self.scale,
+			"strategy": self.strategy,
+			}

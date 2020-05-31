@@ -188,6 +188,7 @@ def _parse_protocol_section(section):
 def _parse_value(x):
 	x = json.loads(x)
 
+	# claro que eu não vou lembrar o motivo dessas linhas...
 	bool1 = isinstance(x, int)
 	bool2 = isinstance(x, float)
 	bool3 = isinstance(x, str)

@@ -1,14 +1,12 @@
 import numpy as np
 from . import DoubleTeacher
-from ..Utils.Sampler import get_first_examples
-from ..Utils.Timer import Timer
 
 class Experiment3Teacher(DoubleTeacher):
 	name = "Experiment3Teacher"
 	_SEED = 0
 	_FRAC_START = 0.01
 	_FRAC_TIME_CHANGE = 1.0/4.0
-	_STRATEGY_DOUBLE_SIZE = DoubleTeacher._STRATEGY_DOUBLE_SIZE # do DoubleTeacher
+	_SCALE = True
 
 	# estados
 	_STATE_DOUBLE_EXAMPLES = 0
@@ -21,9 +19,8 @@ class Experiment3Teacher(DoubleTeacher):
 		seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		frac_time_change: float = _FRAC_TIME_CHANGE,
-		scale = True,
-		strategy: int = _STRATEGY_DOUBLE_SIZE,
-		shuffle: bool = True):
+		scale = _SCALE,
+		strategy: int = DoubleTeacher._STRATEGY_DOUBLE_SIZE):
 		super().__init__(seed, frac_start, scale, strategy)
 		self.safity = safity
 		self.frac_time_change = frac_time_change
@@ -153,4 +150,14 @@ class Experiment3Teacher(DoubleTeacher):
 		c = t1 / (n1 ** k)
 
 		return (c,k)
+
+	def get_params(self) -> dict:
+		return {
+			"safity": self.safity,
+			"seed": self.seed,
+			"frac_start": self.frac_start,
+			"frac_time_change": self.frac_time_change,
+			"scale": self.scale,
+			"strategy": self.strategy,
+			}
 
