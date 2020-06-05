@@ -20,6 +20,8 @@ def _get_is_numeric(dataset_name):
 		"car.csv": False,
 		"ClaveVectors_Firm_Teacher_Model.csv": True,
 		"covtype.csv": True,
+		"covtype_train.csv": True,
+		"covtype_test.csv": True,
 		"crowdsourced.csv": True,
 		"default_of_credit_card_clients.csv": True,
 		"Electrical_grid_stability_simulated_data.csv": True,

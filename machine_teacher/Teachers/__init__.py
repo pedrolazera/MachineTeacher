@@ -7,3 +7,4 @@ from .RandomTeacher import RandomTeacher
 from .Experiment2Teacher import Experiment2Teacher
 from .Experiment3Teacher import Experiment3Teacher
 from .Experiment5Teacher import Experiment5Teacher
+from .SelectDistTeacher import SelectDistTeacher
