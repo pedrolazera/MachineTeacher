@@ -5,6 +5,7 @@ from ..Utils.Sampler import get_first_examples
 
 
 class SelectDistTeacher(Experiment3Teacher):
+	name = "SelectDistTeacher"
 	def __init__(self,
 		safity: float,
 		seed: int = Experiment3Teacher._SEED,

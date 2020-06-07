@@ -16,6 +16,7 @@ _D_TEACHERS = {
 	Teachers.SingleBatchTeacher.name: Teachers.SingleBatchTeacher,
 	Teachers.DoubleTeacher.name: Teachers.DoubleTeacher,
 	Teachers.Experiment3Teacher.name: Teachers.Experiment3Teacher,
+	Teachers.SelectDistTeacher.name: Teachers.SelectDistTeacher,
 }
 
 def get_teacher(teacher_name, args):
