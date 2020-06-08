@@ -18,9 +18,8 @@ class Experiment1Teacher(DoubleTeacher):
 		safity: float,
 		seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		frac_time_change: float = _FRAC_TIME_CHANGE,
-		scale = True):
-		super().__init__(seed, frac_start, scale)
+		frac_time_change: float = _FRAC_TIME_CHANGE):
+		super().__init__(seed, frac_start)
 		self.safity = safity
 		self.timer = Timer()
 		self.time_limit = time_limit

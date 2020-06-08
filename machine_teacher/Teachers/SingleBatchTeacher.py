@@ -6,14 +6,10 @@ from sklearn import preprocessing
 class SingleBatchTeacher(Teacher):
 	name = "SingleBatchTeacher"
 
-	def __init__(self, scale = True):
-		self.scale = scale
+	def __init__(self):
+		return
 
 	def start(self, X, y, time_left: float):
-		if self.scale:
-			warnings.warn("X is being scaled inplace!")
-			preprocessing.scale(X, copy = False)
-
 		return self._start(X, y, time_left)
 
 	def get_first_examples(self, time_left: float) -> np.ndarray:

@@ -6,7 +6,6 @@ class Experiment3Teacher(DoubleTeacher):
 	_SEED = 0
 	_FRAC_START = 0.01
 	_FRAC_TIME_CHANGE = 1.0/4.0
-	_SCALE = True
 
 	# estados
 	_STATE_DOUBLE_EXAMPLES = 0
@@ -19,9 +18,8 @@ class Experiment3Teacher(DoubleTeacher):
 		seed: int = _SEED,
 		frac_start: float = _FRAC_START,
 		frac_time_change: float = _FRAC_TIME_CHANGE,
-		scale = _SCALE,
 		strategy: int = DoubleTeacher._STRATEGY_DOUBLE_SIZE):
-		super().__init__(seed, frac_start, scale, strategy)
+		super().__init__(seed, frac_start, strategy)
 		self.safity = safity
 		self.frac_time_change = frac_time_change
 
@@ -157,7 +155,6 @@ class Experiment3Teacher(DoubleTeacher):
 			"seed": self.seed,
 			"frac_start": self.frac_start,
 			"frac_time_change": self.frac_time_change,
-			"scale": self.scale,
 			"strategy": self.strategy,
 			}
 

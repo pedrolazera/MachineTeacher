@@ -11,9 +11,8 @@ class SelectDistTeacher(Experiment3Teacher):
 		seed: int = Experiment3Teacher._SEED,
 		frac_start: float = Experiment3Teacher._FRAC_START,
 		frac_time_change: float = Experiment3Teacher._FRAC_TIME_CHANGE,
-		scale = Experiment3Teacher._SCALE,
 		strategy: int = DoubleTeacher._STRATEGY_DOUBLE_SIZE):
-		super().__init__(safity, seed, frac_start, frac_time_change, scale, strategy)
+		super().__init__(safity, seed, frac_start, frac_time_change, strategy)
 
 
 		assert safity > -1.0
@@ -47,8 +46,9 @@ class SelectDistTeacher(Experiment3Teacher):
 			self._state = self._STATE_DONE
 
 			assert self.qtd_selected_untrained_tested_examples == len(self._selected_examples)
-			
-			return self._send_new_ids(self._selected_examples)
+			#return self._send_new_ids(self._selected_examples)
+			new_examples = self._get_selected_ids(test_ids, test_labels)
+			return self._send_new_ids(new_examples)
 
 
 
@@ -75,7 +75,8 @@ class SelectDistTeacher(Experiment3Teacher):
 			self.qtd_selected_untrained_tested_examples = 0
 			self.qtd_untrained_tested_examples = 0
 			self._state = self._STATE_GET_WRONG_EXAMPLES
-			self._last_increase_amount = None #bound do numero maximo de exemplos que devem ser testados
+			#bound do numero maximo de exemplos que devem ser testados
+			self._last_increase_amount = len(self.y) 
 			self.classes = np.unique(self.y)
 			self._selected_examples = np.array([], dtype=int)
 			#print("MUDANDO DE ESTRATEGIA...")
@@ -84,21 +85,21 @@ class SelectDistTeacher(Experiment3Teacher):
 			last_labels = test_labels[-self._last_increase_amount:]
 			new_ids = self._get_selected_ids(last_ids, last_labels)
 			self.qtd_selected_untrained_tested_examples += len(new_ids)
-			self._selected_examples = np.append(self._selected_examples, new_ids)
+			self._selected_examples = np.append(self._selected_examples, new_ids)	
+			assert len(self._selected_examples) == len(set(self._selected_examples))
 
 		# check if is possible (there is time) to increase training set
 		new_test_id = self.S_current_size + self.qtd_untrained_tested_examples
 		training_set_size = self.S_current_size + self.qtd_selected_untrained_tested_examples
-		if self._last_increase_amount is None:
-			self._last_increase_amount = self.m - training_set_size
-		self._last_increase_amount = self._get_max_increase_amount(0, self._last_increase_amount, 
+		bound_max = min(self.m - new_test_id, self._last_increase_amount)
+		self._last_increase_amount = self._get_max_increase_amount(0, bound_max, 
 														training_set_size, time_left)
-		if new_test_id < len(self.y):
+		if bound_max > 0:
 			new_test_ids = self.shuffled_ids[new_test_id: new_test_id+self._last_increase_amount] # o double teacher embaralha referências
 			if self._last_increase_amount == 0:
 				assert new_test_ids.size == 0
 			self.qtd_untrained_tested_examples += len(new_test_ids)
-			return new_test_ids
+			return new_test_ids 
 		else:
 			if self.qtd_selected_untrained_tested_examples == 0:
 				self._state = self._STATE_DONE

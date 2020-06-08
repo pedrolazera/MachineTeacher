@@ -5,19 +5,22 @@ import os
 
 _SEP = ','
 
-def load_dataset_from_path(path, is_numeric = None):
+def load_dataset_from_path(path, is_numeric = None, scale=True):
 	if is_numeric is None:
 		dataset_name = os.path.basename(path)
 		is_numeric = _get_is_numeric(dataset_name)
 
-	return _tmp_load_dataset(path, is_numeric)
+	return _tmp_load_dataset(path, is_numeric, scale)
 
 def load_dataset_train_test_from_path(path_treino,
-	path_teste, is_numeric = None):
+	path_teste, is_numeric = None, scale=True):
 	# carrega treino, aplica transformação em X e em Y
 	# carrega teste, aplica as mesmas transformações em X e em Y
-	raise NotImplementedError
-	return (X_train, y_train, X_test, y_test)
+	if is_numeric is None:
+		dataset_name = os.path.basename(path_treino)
+		is_numeric = _get_is_numeric(dataset_name)
+	
+	return _tmp_load_dataset_train_test(path_treino, path_teste, is_numeric, scale)
 
 def _get_is_numeric(dataset_name):
 	_d = {
@@ -58,7 +61,7 @@ def _get_is_numeric(dataset_name):
 
 	return _d[dataset_name]
 
-def _tmp_load_dataset(path, is_numeric):
+def _tmp_load_dataset(path, is_numeric, scale):
 	data  = pd.read_csv(path, header = None, sep = _SEP)
 	y = data[0].values
 
@@ -72,5 +75,38 @@ def _tmp_load_dataset(path, is_numeric):
 	else:
 		data = data.drop(columns = [0])
 		X = pd.get_dummies(data, columns = data.columns).values
+
+	if scale:
+		preprocessing.scale(X, copy = False)
 			
 	return (X,y)
+
+
+def _tmp_load_dataset_train_test(path_train, path_test, is_numeric, scale):
+	data_train  = pd.read_csv(path_train, header=None, sep=',')
+	data_test  = pd.read_csv(path_test, header=None, sep=',')
+	y_train = data_train[0].values
+	y_test = data_test[0].values
+
+	if is_numeric:			
+		X_train = data_train.drop(columns=[0]).values
+		X_test = data_test.drop(columns=[0]).values
+	else:
+		data_train = data_train.drop(columns=[0])
+		data_test = data_test.drop(columns=[0])
+		X_train = pd.get_dummies(data_train, columns=data_train.columns).values
+		X_test = pd.get_dummies(data_test, columns=data_test.columns).values
+
+	if scale:
+		scaler = preprocessing.StandardScaler()
+		scaler.fit(X_train)
+		scaler.transform(X_train, copy = False)
+		scaler.transform(X_test, copy = False)
+
+	le = preprocessing.LabelEncoder()
+	le.fit(y_train)
+
+	y_train = le.transform(y_train)
+	y_test = le.transform(y_test)
+
+	return (X_train, y_train, X_test, y_test)

@@ -14,7 +14,6 @@ class TestesDoubleTeacher(unittest.TestCase):
 		teacher_args = {
 			"seed": 0,
 			"frac_start": 0.1,
-			"scale": True,
 			"strategy": DoubleTeacher._STRATEGY_DOUBLE_INCREMENT
 		}
 
@@ -35,7 +34,6 @@ class TestesDoubleTeacher(unittest.TestCase):
 		teacher_args = {
 			"seed": 0,
 			"frac_start": 0.1,
-			"scale": True,
 			"strategy": DoubleTeacher._STRATEGY_DOUBLE_SIZE
 		}
 		train_ids = []

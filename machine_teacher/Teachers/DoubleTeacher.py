@@ -13,18 +13,12 @@ class DoubleTeacher(Teacher):
 
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		scale: bool = True,
 		strategy: int = _STRATEGY_DOUBLE_INCREMENT):
 		self.seed = seed
 		self.frac_start = frac_start
-		self.scale = scale
 		self.strategy = strategy
 
 	def start(self, X, y, time_left: float):
-		if self.scale:
-			warnings.warn("X is being scaled inplace!")
-			preprocessing.scale(X, copy = False)
-
 		self._start(X, y, time_left)
 		self.num_iters = 0
 		self.m = y.size
@@ -99,6 +93,5 @@ class DoubleTeacher(Teacher):
 		return {
 			"seed": self.seed,
 			"frac_start": self.frac_start,
-			"scale": self.scale,
 			"strategy": self.strategy,
 			}
