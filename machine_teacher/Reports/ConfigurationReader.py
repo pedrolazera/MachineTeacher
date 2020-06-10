@@ -4,17 +4,18 @@ from os.path import basename
 from ..Utils.CustomIterator import CustomIterator
 
 _SECTIONS = ('teacher', 'learner', 'dataset', 'destination')
+_DATASET_SUPERSET_SECTION = {'path', 'scale', 'is_numeric',
+							 'path_test', 'shuffle_dataset'}
+_PROTOCOL_SUPERSET_SECTION = {'time_limit'}
 
 class _TestConfiguration:
 	def __init__(self, teacher_name: str, learner_name: str,
-		dataset_path: str, dataset_is_numeric: bool,
 		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str,
-		protocol_kwargs: dict):
+		dataset_kwargs: dict, protocol_kwargs: dict):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
-		self.dataset_path = dataset_path
-		self.dataset_is_numeric = dataset_is_numeric
-		self.dataset_name = basename(dataset_path)
+		self.dataset_kwargs = dataset_kwargs
+		self.dataset_name = basename(dataset_kwargs["path"])
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
@@ -24,23 +25,21 @@ class _TestConfiguration:
 		return "\n".join((
 			self.teacher_name,
 			self.learner_name,
-			self.dataset_path,
+			str(self.dataset_kwargs),
 			str(self.teacher_kwargs),
 			str(self.learner_kwargs),
 			self.dest_folder,
-			self.protocol_kwargs
+			str(self.protocol_kwargs)
 			))
 
 class _TestConfigurations:
 	def __init__(self, teacher_name: str, learner_name: str,
-		dataset_path: str, dataset_is_numeric: bool,
 		teacher_kwargs: dict, learner_kwargs: dict, dest_folder: str,
-		protocol_kwargs: dict):
+		dataset_kwargs: dict, protocol_kwargs: dict):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
-		self.dataset_path = dataset_path
-		self.dataset_name = basename(dataset_path)
-		self.dataset_is_numeric = dataset_is_numeric
+		self.dataset_kwargs = dataset_kwargs
+		self.dataset_name = basename(dataset_kwargs["path"])
 		self.teacher_kwargs = teacher_kwargs
 		self.learner_kwargs = learner_kwargs
 		self.dest_folder = dest_folder
@@ -70,8 +69,8 @@ class _TestConfigurations:
 		_d_learner = self._get_d_learner(self._v_learner)
 
 		return _TestConfiguration(self.teacher_name, self.learner_name,
-			self.dataset_path, self.dataset_is_numeric, _d_teacher,
-			_d_learner, self.dest_folder, self.protocol_kwargs)
+			_d_teacher, _d_learner, self.dest_folder, 
+			self.dataset_kwargs, self.protocol_kwargs)
 
 	def _get_teacher_args_iter(self):
 		limits = self._get_v_teacher_limits()
@@ -127,7 +126,7 @@ def read_configuration_file(path: str):
 
 	teacher_name, teacher_kwargs = _parse_teacher_section(config['teacher'])
 	learner_name, learner_kwargs = _parse_learner_section(config['learner'])
-	dataset_path, is_numeric = _parse_dataset_section(config['dataset'])
+	dataset_kwargs = _parse_dataset_section(config['dataset'])
 	dest_folder = _parse_string(config['destination']['path'])
 
 	# protocol optional args
@@ -137,9 +136,9 @@ def read_configuration_file(path: str):
 		protocol_kwargs = dict()
 
 	return _TestConfigurations(
-		teacher_name, learner_name, dataset_path, is_numeric,
+		teacher_name, learner_name,
 		teacher_kwargs, learner_kwargs, dest_folder,
-		protocol_kwargs
+		dataset_kwargs, protocol_kwargs
 		)
 
 def _sections_to_lowercase(config):
@@ -161,19 +160,23 @@ def _parse_learner_section(section):
 
 def _parse_dataset_section(section):
 	assert 'path' in section
-	#assert 'is_numeric' in section
+	assert set(section) <= _DATASET_SUPERSET_SECTION
 
-	path = _parse_string(section['path'])
+	kwargs = dict()
+	
+	for (key, val) in dict(section).items():
+		val = _parse_value(val)
 
-	if "is_numeric" in section:
-		is_numeric = _parse_boolean(section['is_numeric'])
-	else:
-		is_numeric = None
+		assert len(val) == 1, "protocol parameters does not support lists"
 
-	return (path, is_numeric)
+		val = val[0]
+		kwargs[key] = val
+
+	return kwargs
 
 def _parse_protocol_section(section):
 	kwargs = dict()
+	assert set(section) <= _PROTOCOL_SUPERSET_SECTION
 	
 	for (key, val) in dict(section).items():
 		val = _parse_value(val)

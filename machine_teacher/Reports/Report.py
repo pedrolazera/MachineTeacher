@@ -2,6 +2,7 @@ import csv
 import os
 from datetime import datetime
 from time import sleep
+from copy import copy
 from ..Definitions import InputSpace
 from ..Definitions import Labels
 from ..GenericTeacher import Teacher
@@ -61,12 +62,20 @@ def create_reports_from_configuration_file(src_path: str,
 	dest_folder_path: str = None, verbose = False):
 	configs = read_configuration_file(src_path)
 
+	dataset_name = configs.dataset_name
+	protocol_kwargs = configs.protocol_kwargs
+	dataset_kwargs = configs.dataset_kwargs
+
 	if dest_folder_path is None:
 		dest_folder_path = configs.dest_folder
 
-	dataset_is_numeric = configs.dataset_is_numeric
-	X, y = load_dataset_from_path(configs.dataset_path,
-		dataset_is_numeric)
+	if "path_test" in dataset_kwargs:
+		X, y, X_test, y_test = load_dataset_from_path(**dataset_kwargs)
+	else:
+		X, y = load_dataset_from_path(**dataset_kwargs)
+		X_test = None
+		y_test = None
+
 	dataset_name = configs.dataset_name
 	protocol_kwargs = configs.protocol_kwargs
 	
@@ -74,7 +83,7 @@ def create_reports_from_configuration_file(src_path: str,
 	for conf in configs:
 		T = get_teacher(conf.teacher_name, conf.teacher_kwargs)
 		L = get_learner(conf.learner_name, conf.learner_kwargs)
-		TR_i = teach(T, L, X.copy(), y.copy(),
+		TR_i = teach(T, L, copy(X), copy(y), copy(X_test), copy(y_test),
 			dataset_name=dataset_name,
 			**protocol_kwargs)
 		TRs.append(TR_i)

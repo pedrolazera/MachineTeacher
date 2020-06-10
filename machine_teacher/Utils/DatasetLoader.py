@@ -1,26 +1,43 @@
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
+from sklearn.utils import shuffle
 import os
 
 _SEP = ','
+_SHUFFLE_RANDOM_STATE = 0
 
-def load_dataset_from_path(path, is_numeric = None, scale=True):
+def load_dataset_from_path(path, is_numeric = None,
+	*, scale=True, shuffle_dataset =False,
+	shuffle_random_state = _SHUFFLE_RANDOM_STATE):
 	if is_numeric is None:
 		dataset_name = os.path.basename(path)
 		is_numeric = _get_is_numeric(dataset_name)
 
-	return _tmp_load_dataset(path, is_numeric, scale)
+	X, y = _tmp_load_dataset(path, is_numeric, scale)
+
+	if shuffle_dataset:
+		shuffle(X, y, random_state = shuffle_random_state)
+
+	return (X, y)
 
 def load_dataset_train_test_from_path(path_treino,
-	path_teste, is_numeric = None, scale=True):
+	path_teste, is_numeric = None, *, scale=True,
+	shuffle_dataset = False, shuffle_random_state = _SHUFFLE_RANDOM_STATE):
 	# carrega treino, aplica transformação em X e em Y
 	# carrega teste, aplica as mesmas transformações em X e em Y
 	if is_numeric is None:
 		dataset_name = os.path.basename(path_treino)
 		is_numeric = _get_is_numeric(dataset_name)
 	
-	return _tmp_load_dataset_train_test(path_treino, path_teste, is_numeric, scale)
+	X_train, y_train, X_test, y_test = _tmp_load_dataset_train_test(path_treino,
+		path_teste, is_numeric, scale)
+
+	if shuffle_dataset:
+		shuffle(X_train, y_train, random_state = shuffle_random_state)
+		shuffle(X_test, y_test, random_state = shuffle_random_state)
+
+	return (X_train, y_train, X_test, y_test)
 
 def _get_is_numeric(dataset_name):
 	_d = {
@@ -33,15 +50,27 @@ def _get_is_numeric(dataset_name):
 		"avila_test.csv": True,
 
 		"bank_marketing.csv": True,
+		"bank_marketing_dataset_train.csv": True,
+		"bank_marketing_dataset_test.csv": True,
+
 		"car.csv": False,
+		
 		"ClaveVectors_Firm_Teacher_Model.csv": True,
+		"ClaveVectors_Firm_Teacher_Model_train.csv": True,
+		"ClaveVectors_Firm_Teacher_Model_test.csv": True,
+
 		"covtype.csv": True,
 		"covtype_train.csv": True,
 		"covtype_test.csv": True,
+		
 		"crowdsourced.csv": True,
+		
 		"default_of_credit_card_clients.csv": True,
+		
 		"Electrical_grid_stability_simulated_data.csv": True,
+		
 		"HTRU.csv": True,
+		
 		"mnist_train.csv": True,
 		"mnist_test.csv": True,
 
@@ -53,11 +82,17 @@ def _get_is_numeric(dataset_name):
 		"poker_hand_test.csv": False,
 
 		"Sensorless_drive_diagnosis.csv": True,
+		"Sensorless_drive_diagnosis_train.csv": True,
+		"Sensorless_drive_diagnosis_test.csv": True,
+		
 		"shuttle.csv": True,
-		"Skin_NonSkin.csv": True
+		
+		"Skin_NonSkin.csv": True,
+		"Skin_NonSkin_train.csv": True,
+		"Skin_NonSkin_test.csv": True
 	}
 
-	assert dataset_name in _d, "dataset {} " + str(dataset_name) + "nao cadastrado"
+	assert dataset_name in _d, "dataset {} " + str(dataset_name) + " nao cadastrado"
 
 	return _d[dataset_name]
 
@@ -97,12 +132,18 @@ def _tmp_load_dataset_train_test(path_train, path_test, is_numeric, scale):
 		X_train = pd.get_dummies(data_train, columns=data_train.columns).values
 		X_test = pd.get_dummies(data_test, columns=data_test.columns).values
 
+	# aplica mesmas transformações (de soma e divisão) ao
+	# dataset de treino e ao dataset de teste
 	if scale:
 		scaler = preprocessing.StandardScaler()
 		scaler.fit(X_train)
 		scaler.transform(X_train, copy = False)
 		scaler.transform(X_test, copy = False)
 
+
+	# transforma rótulos (labels) em inteiros sequenciais
+	# a partir de 0. Aplica as mesmas transformações nos
+	# rótulos de treino e de teste
 	le = preprocessing.LabelEncoder()
 	le.fit(y_train)
 

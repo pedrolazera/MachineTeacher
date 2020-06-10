@@ -19,7 +19,7 @@ class TeachResult:
 		log, # vetor de linhas do log, cada linha é o estado de uma iteração
 		time_limit: float,
 		qtd_classes: int,
-		dist_classes, # vetor com a qtd de cada classe
+		dist_classes, # vetor com o % de cada classe
 		dataset_name: str = _DATASET_STD_NAME):
 
 		# output
@@ -186,7 +186,7 @@ class _MainInfos:
 		_v.append("dataset qtd examples: {}".format(self.dataset_qtd_examples))
 		_v.append("qtd attributes: {}".format(self.qtd_attributes))
 		_v.append("qtd classes: {}".format(self.qtd_classes))
-		_v.append("dist classes: {}".format(self.dist_classes))
+		_v.append("dataset dist classes: {}".format(self.dist_classes))
 		_v.append("time limit {:.3f}".format(self.time_limit))
 		_v.append("total time: {:.3f}".format(self.total_time))
 		_v.append("qtd iters: {}".format(self.qtd_iters))

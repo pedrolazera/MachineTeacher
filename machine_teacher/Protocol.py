@@ -18,9 +18,10 @@ from .Definitions import get_qtd_rows
 
 _TIMER_KEYS = ("training", "classification", "get_examples")
 
-_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time", "time_left",
-	"get_examples_time", "training_time", "classification_time",
-	"qtd_classified_examples", "TS_qtd_classes", "TS_class_distribution", "validation_set_accuracy")
+_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time",
+	"time_left", "get_examples_time", "training_time",
+	"classification_time", "qtd_classified_examples", "TS_qtd_classes",
+	"TS_class_distribution", "validation_set_accuracy")
 
 _TIME_LIMIT = 1000000000.0 # in seconds
 
@@ -31,12 +32,7 @@ def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels, 
 	X_validation: InputSpace = None, X_validation_labels: Labels = None, *,
 	dataset_name = TeachResult._DATASET_STD_NAME,
-	time_limit = _TIME_LIMIT,
-	shuffle_dataset = _SHUFFLE_DATASET,
-	shuffle_random_state = _SHUFFLE_RANDOM_STATE) -> TeachResult:
-	if shuffle_dataset:
-		X, X_labels = shuffle(X, X_labels, random_state = shuffle_random_state)
-
+	time_limit = _TIME_LIMIT) -> TeachResult:
 	# timer
 	timer = Timer()
 	ok_timer = None
