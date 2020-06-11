@@ -94,6 +94,7 @@ class SelectDistTeacher(Experiment3Teacher):
 		bound_max = min(self.m - new_test_id, self._last_increase_amount)
 		self._last_increase_amount = self._get_max_increase_amount(0, bound_max, 
 														training_set_size, time_left)
+
 		if bound_max > 0:
 			new_test_ids = self.shuffled_ids[new_test_id: new_test_id+self._last_increase_amount] # o double teacher embaralha referências
 			if self._last_increase_amount == 0:
