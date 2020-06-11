@@ -19,7 +19,8 @@ class TeachResult:
 		log, # vetor de linhas do log, cada linha é o estado de uma iteração
 		time_limit: float,
 		qtd_classes: int,
-		dist_classes, # vetor com o % de cada classe
+		dist_classes, # vetor com o % de cada classe,
+		validation_set_accuracy: float,
 		dataset_name: str = _DATASET_STD_NAME):
 
 		# output
@@ -42,7 +43,8 @@ class TeachResult:
 			T._get_accuracy(h), # accuracy,
 			timer["get_examples"], # get_examples_time
 			timer["training"], # training time
-			timer["classification"] # classification time,
+			timer["classification"], # classification time,
+			validation_set_accuracy
 			)
 		
 		self.timer = timer
@@ -105,7 +107,8 @@ class _MainInfos:
 		time_limit: float, total_time: float,
 		qtd_iters: int, 
 		teaching_set_size: int, accuracy: float,
-		get_examples_time: float, training_time: float, classification_time: float):
+		get_examples_time: float, training_time: float, classification_time: float,
+		validation_set_accuracy: float):
 		self.teacher_name = teacher_name
 		self.learner_name = learner_name
 		self.dataset_name = dataset_name
@@ -122,6 +125,7 @@ class _MainInfos:
 		self.get_examples_time = get_examples_time
 		self.training_time = training_time
 		self.classification_time = classification_time
+		self.validation_set_accuracy = validation_set_accuracy
 
 	@staticmethod
 	def get_header():
@@ -129,8 +133,9 @@ class _MainInfos:
 			"dataset_qtd_examples", "dataset_qtd_attributes",
 			"dataset_qtd_classes", "dataset_dist_classes",
 			"time_limit", "total_time", "qtd_iters",
-			"teaching_set_size", "accuracy",
-			"get_examples_time", "training_time", "classification_time"]
+			"teaching_set_size", "dataset_accuracy",
+			"get_examples_time", "training_time", "classification_time",
+			"validation_set_accuracy"]
 
 	def get_infos_list(self):
 		return [self.teacher_name, self.learner_name,
@@ -138,7 +143,8 @@ class _MainInfos:
 			self.qtd_attributes, self.qtd_classes, self.dist_classes,
 			self.time_limit, self.total_time, 
 			self.qtd_iters, self.teaching_set_size, self.accuracy,
-			self.get_examples_time, self.training_time, self.classification_time]
+			self.get_examples_time, self.training_time, self.classification_time,
+			self.validation_set_accuracy]
 
 	def __add__(self, other):
 		assert self.teacher_name == other.teacher_name
@@ -159,6 +165,7 @@ class _MainInfos:
 		new.get_examples_time += other.get_examples_time
 		new.training_time += other.training_time
 		new.classification_time += other.classification_time
+		new.validation_set_accuracy += other.validation_set_accuracy
 		
 		return new
 
@@ -172,6 +179,7 @@ class _MainInfos:
 		new.get_examples_time *= alpha
 		new.training_time *= alpha
 		new.classification_time *= alpha
+		new.validation_set_accuracy *= alpha
 		
 		return new
 
@@ -195,6 +203,7 @@ class _MainInfos:
 		_v.append("get examples time: {:.3f}".format(self.get_examples_time))
 		_v.append("training time: {:.3f}".format(self.training_time))
 		_v.append("classification time: {:.3f}".format(self.classification_time))
+		_v.append("validation set accuracy: {:.3f}".format(self.validation_set_accuracy))
 
 		return "\n".join(_v)
 

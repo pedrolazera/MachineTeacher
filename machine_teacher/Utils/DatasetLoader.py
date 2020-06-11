@@ -21,16 +21,16 @@ def load_dataset_from_path(path, is_numeric = None,
 
 	return (X, y)
 
-def load_dataset_train_test_from_path(path_treino,
+def load_dataset_train_test_from_path(path,
 	path_teste, is_numeric = None, *, scale=True,
 	shuffle_dataset = False, shuffle_random_state = _SHUFFLE_RANDOM_STATE):
 	# carrega treino, aplica transformação em X e em Y
 	# carrega teste, aplica as mesmas transformações em X e em Y
 	if is_numeric is None:
-		dataset_name = os.path.basename(path_treino)
+		dataset_name = os.path.basename(path)
 		is_numeric = _get_is_numeric(dataset_name)
 	
-	X_train, y_train, X_test, y_test = _tmp_load_dataset_train_test(path_treino,
+	X_train, y_train, X_test, y_test = _tmp_load_dataset_train_test(path,
 		path_teste, is_numeric, scale)
 
 	if shuffle_dataset:

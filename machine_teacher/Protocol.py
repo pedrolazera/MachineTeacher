@@ -18,7 +18,7 @@ from .Definitions import get_qtd_rows
 
 _TIMER_KEYS = ("training", "classification", "get_examples")
 
-_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time",
+_LOG_HEADER = ("iter", "TS_size", "dataset_accuracy", "elapsed_time",
 	"time_left", "get_examples_time", "training_time",
 	"classification_time", "qtd_classified_examples", "TS_qtd_classes",
 	"TS_class_distribution", "validation_set_accuracy")
@@ -41,7 +41,7 @@ def teach(T: Teacher, L: Learner,
 	_set_timer_keys_to_zero(timer, _TIMER_KEYS)
 
 	# teacher log
-	log = [_HEADER] # not being used so far
+	log = [_LOG_HEADER] # not being used so far
 	test_ids = np.array([], dtype=int)
 
 	# wrappers
@@ -129,8 +129,16 @@ def teach(T: Teacher, L: Learner,
 	# # qtd classes e distribuicao das classes no dataset
 	qtd_classes, dist_classes = _get_class_qtd_and_distribution(X_labels)
 
+	# # acurácia no conjunto de teste
+	if X_validation is not None:
+		validation_set_accuracy = _get_accuracy(L.predict(X_validation),
+												X_validation_labels)
+	else:
+		validation_set_accuracy = -1
+
 	return TeachResult(T, L, ok_train_ids, h, ok_timer, qtd_iters,
-		get_qtd_columns(X), log, time_limit, qtd_classes, dist_classes, dataset_name)
+		get_qtd_columns(X), log, time_limit, qtd_classes,
+		dist_classes, validation_set_accuracy, dataset_name)
 
 def _run_tests(T: Teacher, L: Learner,
 	X: InputSpace, get_time_left):

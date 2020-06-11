@@ -4,8 +4,8 @@ from os.path import basename
 from ..Utils.CustomIterator import CustomIterator
 
 _SECTIONS = ('teacher', 'learner', 'dataset', 'destination')
-_DATASET_SUPERSET_SECTION = {'path', 'scale', 'is_numeric',
-							 'path_test', 'shuffle_dataset'}
+_DATASET_SUPERSET_SECTION = {'path', 'path_teste', 'scale',
+							 'is_numeric', 'shuffle_dataset'}
 _PROTOCOL_SUPERSET_SECTION = {'time_limit'}
 
 class _TestConfiguration:
@@ -160,6 +160,7 @@ def _parse_learner_section(section):
 
 def _parse_dataset_section(section):
 	assert 'path' in section
+
 	assert set(section) <= _DATASET_SUPERSET_SECTION
 
 	kwargs = dict()

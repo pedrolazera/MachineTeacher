@@ -13,6 +13,7 @@ from ..Protocol import teach
 from ..Utils.TeacherLearnerLoader import get_teacher
 from ..Utils.TeacherLearnerLoader import get_learner
 from ..Utils.DatasetLoader import load_dataset_from_path
+from ..Utils.DatasetLoader import load_dataset_train_test_from_path
 
 _FAMILY_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S"
 _SET_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
@@ -69,8 +70,8 @@ def create_reports_from_configuration_file(src_path: str,
 	if dest_folder_path is None:
 		dest_folder_path = configs.dest_folder
 
-	if "path_test" in dataset_kwargs:
-		X, y, X_test, y_test = load_dataset_from_path(**dataset_kwargs)
+	if "path_teste" in dataset_kwargs:
+		X, y, X_test, y_test = load_dataset_train_test_from_path(**dataset_kwargs)
 	else:
 		X, y = load_dataset_from_path(**dataset_kwargs)
 		X_test = None
