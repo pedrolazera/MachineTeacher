@@ -1,3 +1,28 @@
+"""
+This module implements the function protocol.
+
+The function performs the interactions between
+a teacher T and a learner L over a dataset (X, X_labels),
+where X is a vector of rows of atributs and X_labels
+is a vector of labels, one for each row in X
+
+In the first interaction, T provides
+some examples (X_0, y_0) that are given to L. L trains with
+(fits) this first set of examples
+
+Every other interaction has two parts. In the first parts,
+T provides examples X_t (subset of X) and L classifies (does not 
+train with) these examples. In the second part, aware of
+how L classified each example in X_t, T provides
+some examples (X_s, y_s) that are given to L. L trains with
+(fits) this set of examples.
+
+The total time spent in the interactions must not exceed a time
+limit.
+
+Author: Pedro Lazéra Cardoso
+"""
+
 import numpy as np
 from datetime import datetime
 from copy import copy

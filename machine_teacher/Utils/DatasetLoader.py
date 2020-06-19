@@ -86,6 +86,8 @@ def _get_is_numeric(dataset_name):
 		"Sensorless_drive_diagnosis_test.csv": True,
 		
 		"shuttle.csv": True,
+		"shuttle_train.csv": True,
+		"shuttle_test.csv": True,
 		
 		"Skin_NonSkin.csv": True,
 		"Skin_NonSkin_train.csv": True,
