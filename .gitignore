@@ -7,3 +7,6 @@ __pycache__/
 
 # jupyter notebook
 .ipynb_checkpoints
+
+# docs
+machine_teacher/docs
