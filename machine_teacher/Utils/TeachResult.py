@@ -1,3 +1,17 @@
+"""
+This modules implements the class TeachResult,
+the result of a set of interactions between a teacher T
+and a Learner L over a Dataset (X, y)
+
+The result contains the teaching set ids (ids of the
+examples) provided by T to L, so that L tries to fit
+these examples, the hypothesis h (how L classifies
+each example in the entire dataset) and some statistics
+of the intereactions
+
+Author: Pedro Lazéra Cardoso
+"""
+
 from datetime import datetime
 from copy import deepcopy
 from copy import copy

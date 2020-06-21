@@ -1,3 +1,15 @@
+"""
+This modules runs the protocol on a set of parameters
+(Teachers, Learners, Datasets) previously tested in an
+old project.
+
+On top of that, this modules test the protocol method
+behaviour when the teacher and the learner run out
+of time
+
+Author: Pedro Lazéra Cardoso
+"""
+
 import unittest
 import numpy as np
 from time import sleep
@@ -8,6 +20,7 @@ from .datasets import car
 from .datasets import crowdsourced
 
 class PacTeacherTest(unittest.TestCase):
+	""" Test cases for the PacTeacher """
 	_LEARNER_SEED = 0
 	_TEACHER_SEED = 4
 	_K = 0.005
@@ -16,6 +29,8 @@ class PacTeacherTest(unittest.TestCase):
 	_N_ESTIMATORS = 10
 
 	def test_initial_conditions(self):
+		""" Checks 'PachTeacher' initial conditions """
+
 		T = machine_teacher.Teachers.PacTeacher(seed = self._TEACHER_SEED,
 												batch_relative_size = self._K,
 												frac_start = self._FRAC_START,
@@ -30,6 +45,7 @@ class PacTeacherTest(unittest.TestCase):
 		self.assertEqual(T.batch_size, car.batch_size)
 
 	def test_initial_teaching_set(self):
+		""" Checks 'PacTeacher' first set of training examples """
 		T = machine_teacher.Teachers.PacTeacher(seed = self._TEACHER_SEED,
 												batch_relative_size = self._K,
 												frac_start = self._FRAC_START,
@@ -45,6 +61,8 @@ class PacTeacherTest(unittest.TestCase):
 		self.assertTrue(all(S_first_ids == car.S_first_ids))
 
 	def test_full_teaching_set(self):
+		""" Checks 'PacTeacher' full set of training examples for
+		a the car dataset and the RandomForest Learner """
 		T = machine_teacher.Teachers.PacTeacher(seed = self._TEACHER_SEED,
 												batch_relative_size = self._K,
 												frac_start = self._FRAC_START,
@@ -62,6 +80,7 @@ class PacTeacherTest(unittest.TestCase):
 		self.assertTrue(all(S_ids == car.S_ids))
 
 class WTFTeacherTest(unittest.TestCase):
+	""" Test cases for the WTFTeacherTest """
 	_SEED = 0
 	_K = 0.09
 	_FRAC_START = 0.01
@@ -69,6 +88,7 @@ class WTFTeacherTest(unittest.TestCase):
 	_N_ESTIMATORS = 10
 
 	def test_initial_conditions(self):
+		""" Checks 'WTFTeacherTest' initial conditions """
 		T = machine_teacher.Teachers.WTFTeacher(seed = self._SEED,
 												frac_start = self._FRAC_START,
 												frac_stop = self._FRAC_STOP)
@@ -81,6 +101,7 @@ class WTFTeacherTest(unittest.TestCase):
 		self.assertEqual(T.S_max_size, crowdsourced.S_max_size)
 
 	def test_initial_teaching_set(self):
+		""" Checks 'WTFTeacherTest' first set of training examples """
 		T = machine_teacher.Teachers.WTFTeacher(seed = self._SEED,
 												frac_start = self._FRAC_START,
 												frac_stop = self._FRAC_STOP)
@@ -95,6 +116,8 @@ class WTFTeacherTest(unittest.TestCase):
 		self.assertTrue(all(S_first_ids == crowdsourced.S_first_ids))
 
 	def test_full_teaching_set(self):
+		""" Checks 'WTFTeacher' full set of training examples for
+		a the crowdsourced dataset and the RandomForest Learner """
 		T = machine_teacher.Teachers.WTFTeacher(seed = self._SEED,
 												frac_start = self._FRAC_START,
 												frac_stop = self._FRAC_STOP)
@@ -111,7 +134,11 @@ class WTFTeacherTest(unittest.TestCase):
 		self.assertTrue(all(S_ids == crowdsourced.S_ids))
 
 class CustomTeacherTest(unittest.TestCase):
+	""" Test cases for a custom teacher """
+	
 	def test_run_out_of_time(self):
+		""" Checks the protocol behaviour when the teacher/learner
+		intereactins run out of time """
 		sleep_time = 0.7
 		T = _CustomTeacher(sleep_time)
 		L = _CustomLearner()

@@ -1,3 +1,9 @@
+"""
+This modules just loads Teachers and Learners from
+a string name. It's used by the Report module, to load
+objects from theirs names on configurations files
+"""
+
 from .. import Learners
 from .. import Teachers
 

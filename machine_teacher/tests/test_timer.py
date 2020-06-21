@@ -1,3 +1,10 @@
+"""
+This module tests the Timer module, a stopwatch
+used in the protocol
+
+Author: Pedro Lazéra Cardoso
+"""
+
 import unittest
 from .context import Timer
 from math import isclose
@@ -9,6 +16,7 @@ _EPS = 1e-1
 
 class States(unittest.TestCase):
 	def test_do_stuff_before_start(self):
+		""" Test expected erros before the timewatch starts """
 		t = Timer.Timer()
 		with self.assertRaises(AssertionError):
 			t.tick("blabla")
@@ -26,6 +34,7 @@ class States(unittest.TestCase):
 			t.finish()
 
 	def test_do_forbidden_stuff_during_tick(self):
+		""" Checks impossible actions during tick (a field is active) """
 		t = Timer.Timer()
 		t.start()
 		t.tick("xpto")
@@ -37,6 +46,7 @@ class States(unittest.TestCase):
 			t.tick("xpto2")
 
 	def test_do_forbidden_stuff_during_stop(self):
+		""" Checks impossible actions while the wach is stopped """
 		t = Timer.Timer()
 		t.start()
 		t.tick("xpto")
@@ -49,6 +59,7 @@ class States(unittest.TestCase):
 			t.stop()
 
 	def test_tick_times(self):
+		""" Checks the watch accuracy """
 		t = Timer.Timer()
 		t.start()
 
@@ -106,6 +117,7 @@ class States(unittest.TestCase):
 		self.assertAlmostEqual(t["xpto5"], 2.5, delta = _EPS)
 
 	def test_tick_times_with_stoppage(self):
+		""" Checks the watch accuracy with time stoppages """
 		t = Timer.Timer()
 		t.start()
 
@@ -143,6 +155,7 @@ class States(unittest.TestCase):
 
 
 	def test_total_time(self):
+		""" Checks the watch accuracy measuring total time elapsed """
 		t = Timer.Timer()
 		t.start()
 
@@ -196,6 +209,7 @@ class States(unittest.TestCase):
 		self.assertAlmostEqual(elaps5, t.total_time, delta = _EPS)
 
 	def test_finished(self):
+		""" Checks impossible actions while the wach is finished """
 		t = Timer.Timer()
 		t.start()
 		t.tick("blabla")
@@ -222,6 +236,7 @@ class States(unittest.TestCase):
 		self.assertAlmostEqual(elaps1_timer, elaps2_timer, delta = _EPS)
 
 	def test_copy(self):
+		""" Checks making a copy of the watch """
 		# copy after start
 		t = Timer.Timer()
 		t.start()

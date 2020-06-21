@@ -1,3 +1,17 @@
+"""
+This modules implements a collection of methods
+to perform experiments from configuration files
+or configuration folders (a set of configuration
+files)
+
+Each configuration file must especify 4 sets of
+parameters, concerning the teacher, the learner,
+the dataset and protocol
+
+The result of an experiment is a vector of
+objetcs of type TeachResult
+"""
+
 import csv
 import os
 from datetime import datetime
@@ -19,8 +33,8 @@ _FAMILY_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S"
 _SET_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 _RUN_SUFIX_FORMAT = "%Y_%m_%d_%H_%M_%S_%f"
 
-def create_reports_from_configuration_folder(folder_path, dest_folder_path,
-	verbose = False):
+def create_reports_from_configuration_folder(folder_path,
+	dest_folder_path, verbose = False):
 	assert os.path.isdir(dest_folder_path)
 
 	_sufix = datetime.today().strftime(_FAMILY_SUFIX_FORMAT)

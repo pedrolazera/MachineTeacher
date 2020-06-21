@@ -1,7 +1,42 @@
+"""
+This module implements a stopwatch used in the Protocol module,
+to measure the time spent by the Teacher and the Learner
+in each process of the learning process
+
+Author: Pedro Lazéra Cardoso
+"""
+
 from timeit import default_timer
 from copy import deepcopy
 
 class Timer:
+	"""
+	A class to represent a stopwatch with steroids
+
+	Methods
+	-----------
+	start()
+		Starts the stopwatch
+
+	tick(field: str) -> None
+		Begins (or continue) to count time spent in
+		process "field". "field" is now the active process
+
+	tock() -> Labels:
+		Stops to count time spent in the active process
+
+	finish() -> dict
+		Stops to count time. Freezes the stopwatch.
+
+	get_elapsed_time()
+		Returns total elapsed time
+
+	stop()
+		Stops to count time
+
+	unstop()
+		Continues to count time
+	"""
 	_OFF_STATE = 0
 	_ON_STATE = 1
 	_TICK_STATE = 2
@@ -13,6 +48,9 @@ class Timer:
 		self._state = Timer._OFF_STATE
 
 	def start(self):
+		""" Starts the clock. The special field "total_time"
+		starts ticking. The dictionary of fields is erased.
+		"""
 		self.total_time = 0.0
 		self.others_time = 0.0
 
@@ -26,7 +64,8 @@ class Timer:
 		self._t0_stop_time = None
 		self._t0_curr_field = None
 
-	def tick(self, field):
+	def tick(self, field: str):
+		""" Starts (or restarts) counting time of 'field' """
 		if self._state == Timer._STOP_STATE:
 			self.unstop()
 		
@@ -38,6 +77,7 @@ class Timer:
 		self._state = Timer._TICK_STATE
 
 	def tock(self):
+		""" Stops counting time of the last ticked field """
 		assert (self._state == Timer._TICK_STATE), "cannot tock before tick"
 
 		curr_field = self._curr_field
@@ -48,6 +88,7 @@ class Timer:
 		self._curr_field = None
 
 	def finish(self):
+		"""  """
 		assert (self._state in (Timer._ON_STATE,
 			Timer._TICK_STATE, Timer._STOP_STATE)), "cannot finish before start"
 		
@@ -61,7 +102,7 @@ class Timer:
 
 		self._state = Timer._FINISHED_STATE
 
-	def get_elapsed_time(self):
+	def get_elapsed_time(self) -> float:
 		if self._state == Timer._OFF_STATE:
 			elapsed_time = 0.0
 		if self._state == Timer._FINISHED_STATE:

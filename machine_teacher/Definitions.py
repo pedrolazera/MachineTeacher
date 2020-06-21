@@ -6,6 +6,8 @@ extract statistics from objects of these types are provided
 
 InputSpace -- a two dimensional array from numpy lib
 Labels -- a one dimensional array from numpy lib
+
+Author: Pedro Lazéra Cardoso
 """
 
 import numpy as np

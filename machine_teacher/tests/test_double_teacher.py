@@ -1,3 +1,12 @@
+"""
+This module tests the DoubleTeacher Teacher
+
+The DoubleTeacher is a basic strategy used by many teachers.
+Therefore, is has its own module for tests.
+
+Author: Pedro Lazéra Cardoso
+"""
+
 import unittest
 import numpy as np
 from time import sleep
@@ -6,9 +15,8 @@ from .context import machine_teacher
 DoubleTeacher = machine_teacher.Teachers.DoubleTeacher
 
 class TestesDoubleTeacher(unittest.TestCase):
-	# testa os primeiros exemplos pegos
-	# testa se testa todos os exemplos quando o tempo permite
 	def test_first_examples(self):
+		""" Checks first examples set distribution """
 		N = 100
 		K = 2
 		teacher_args = {
@@ -27,7 +35,10 @@ class TestesDoubleTeacher(unittest.TestCase):
 
 	def test_get_all_examples(self):
 		"""
-		Tamanhos do TS: [10, 20, 40, 80, 100]
+		Checks if the DoubleTeacher trains with every possible
+		example when time permits
+
+		Teaching set sizes: 10, 20, 40, 80, 100
 		"""
 		N = 100
 		K = 2
@@ -43,12 +54,12 @@ class TestesDoubleTeacher(unittest.TestCase):
 		T = DoubleTeacher(**teacher_args)
 		T.start(X, X_labels, _dumb_time_left)
 		
-		# testa distribuicao do batch inicial
+		# Checks initial distribution of the teaching set
 		first_train_ids = T.get_first_examples(_dumb_time_left) # time_left = dumb
 		self.assertEqual( (X_labels[first_train_ids] == 1).sum(), 5)
 		train_ids.append(first_train_ids)
 
-		# testa tamanho do train_id a cada iteração
+		# Check teaching set size on every iteraction
 		_dumb_test_ids = _get_empty_array()
 		_dumb_test_labels = _get_empty_array()
 		for i in range(4):
