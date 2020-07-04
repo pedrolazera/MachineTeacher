@@ -6,7 +6,7 @@ A finalidade do programa é possibilitar e padronizar (i) a interação entre Te
 
 ## Documentação
 
-A documentação do pacote está no arquivo 'MachineTeacher_Documentacao.pdf', na raiz do projeto.
+A documentação do pacote está no arquivo [MachineTeacher_Documentacao.pdf](https://github.com/pedrolazera/MachineTeacher/blob/master/MachineTeacher_Documentacao.pdf), na raiz do projeto.
 
 ## Instalação
 
@@ -18,4 +18,47 @@ As dependências do pacote estão listas em \\ \textit{/MachineTeacher/machine\_
 
 ```bash
 pip3 install -r caminho/MachineTeacher/machine\_teacher/requirements.txt
+```
+
+## Alguns exemplos
+
+### Adicione o pacote ao seu path e importe o pacote
+
+```python
+import sys
+sys.path.append("/caminho/MachineTeacher")
+
+import machine_teacher
+```
+
+### Importe um dos teachers prontos
+
+```python
+T1 = machine_teacher.Teachers.DoubleTeacher()
+```
+
+### Importe um dos learners prontos ou crie um a partir de um modelos do sklearn
+
+```python
+L1 = machine_teacher.Learners.SVMLinearLearner()
+
+
+from sklearn.svm import LinearSVC
+class MyLearner(machine_teacher.GenericLearner):
+	name = "MyLearner"
+
+	def start(self):
+		self.model = LinearSVC()
+
+L2 = MyLearner()
+```
+
+### Rode um experimento com limite de tempo
+
+```python
+L1 = machine_teacher.Learners.SVMLinearLearner()
+T1 = machine_teacher.Teachers.DoubleTeacher()
+time_limit = 10.0
+
+result = machine_teacher.protocol(T1, L1, X, y, time_limit)
 ```
