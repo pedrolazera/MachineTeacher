@@ -14,10 +14,10 @@ Ainda não é possível baixar o pacote pelo pip ou instalar o pacote. Em vez di
 
 ## Dependências
 
-As dependências do pacote estão listas em \\ \textit{/MachineTeacher/machine\_teacher/requirements.txt}. Para instalá-las, basta abrir um terminal e rodar o comando:
+As dependências do pacote estão listadas no arquivo "requirements.txt", em /MachineTeacher/machine_teacher/requirements.txt. Para instalá-las, basta abrir um terminal e rodar o comando:
 
 ```bash
-pip3 install -r caminho/MachineTeacher/machine\_teacher/requirements.txt
+pip3 install -r caminho/MachineTeacher/machine_teacher/requirements.txt
 ```
 
 ## Alguns exemplos
