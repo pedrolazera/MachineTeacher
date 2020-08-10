@@ -1,18 +1,18 @@
 from ..GenericLearner import Learner
-import lightgbm as LGBM
+import xgboost as XGBoost
 import numpy as np
 
 
-class LGBMLearner(Learner):
-	name = "LGBMLearner"
+class XGBoostLearner(Learner):
+	name = "XGBoostLearner"
 
 	def __init__(self, *args, **kwargs):
 		self.args = args
 		self.kwargs = kwargs
 
 	def start(self):
-		self.model = LGBM.LGBMClassifier(*self.args, **self.kwargs)
-		
+		self.model = XGBoost.XGBClassifier(*self.args, **self.kwargs)
+
 	def fit(self, X, y):
 		return self.model.fit(X, y)
 

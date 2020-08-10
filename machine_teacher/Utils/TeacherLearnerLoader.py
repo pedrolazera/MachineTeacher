@@ -13,6 +13,8 @@ _D_LEARNERS = {
 	Learners.RandomForestLearner.name: Learners.RandomForestLearner,
 	Learners.SVMLinearLearner.name: Learners.SVMLinearLearner,
 	Learners.SVMLearner.name: Learners.SVMLearner,
+	Learners.LGBMLearner.name: Learners.LGBMLearner,
+	Learners.XGBoostLearner.name: Learners.XGBoostLearner
 }
 
 _D_TEACHERS = {

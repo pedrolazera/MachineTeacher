@@ -4,3 +4,4 @@ from .RandomForestLearner import RandomForestLearner
 from .SVMLinearLearner import SVMLinearLearner
 from .SVMLearner import SVMLearner
 from .LGBMLearner import LGBMLearner
+from .XGBoostLearner import XGBoostLearner
