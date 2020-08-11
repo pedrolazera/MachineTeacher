@@ -87,7 +87,12 @@ class FixedPercWrongTeacher(Teacher):
 		correct_test_labels = self.y[test_ids[random_size:]]
 		wrong_ids = test_ids[random_size:] [test_labels[random_size:] != correct_test_labels]
 		new_ids = np.append(test_ids[:random_size], wrong_ids)
-		
+
+		### TESTANDO SE FAZ DIFERENCAO COLOCAR ERRADOS ESPALHADOS
+		#f_shuffle = np.random.RandomState(self.seed).shuffle
+		#f_shuffle(new_ids)
+		# ---------------------------------------------------
+
 		self.qtd_untrained_tested_examples += (len(test_ids)-len(new_ids))
 		self.batch_size *= 2
 		self.state_new_ids = self._STATE_SEND_NEW_IDS

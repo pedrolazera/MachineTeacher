@@ -25,6 +25,7 @@ _D_TEACHERS = {
 	Teachers.DoubleTeacher.name: Teachers.DoubleTeacher,
 	Teachers.Experiment3Teacher.name: Teachers.Experiment3Teacher,
 	Teachers.SelectDistTeacher.name: Teachers.SelectDistTeacher,
+	Teachers.FixedPercWrongTeacher.name: Teachers.FixedPercWrongTeacher
 }
 
 def get_teacher(teacher_name, args):

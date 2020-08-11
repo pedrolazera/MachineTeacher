@@ -13,10 +13,12 @@ class DoubleTeacher(Teacher):
 
 	def __init__(self, seed: int = _SEED,
 		frac_start: float = _FRAC_START,
-		strategy: int = _STRATEGY_DOUBLE_INCREMENT):
+		strategy: int = _STRATEGY_DOUBLE_INCREMENT,
+		increment_start: int = 1):
 		self.seed = seed
 		self.frac_start = frac_start
 		self.strategy = strategy
+		self.increment_start = increment_start
 
 	def start(self, X, y, time_left: float):
 		self._start(X, y, time_left)
@@ -50,7 +52,7 @@ class DoubleTeacher(Teacher):
 		if self.strategy == self._STRATEGY_DOUBLE_SIZE:
 			self.batch_size = len(new_ids)
 		elif self.strategy == self._STRATEGY_DOUBLE_INCREMENT:
-			self.batch_size = 1
+			self.batch_size = self.increment_start
 		else:
 			raise ValueError("Estrategia desconhecida: " + str(self.strategy))
 
