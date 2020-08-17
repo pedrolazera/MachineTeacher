@@ -9,3 +9,4 @@ from .Experiment3Teacher import Experiment3Teacher
 from .Experiment5Teacher import Experiment5Teacher
 from .SelectDistTeacher import SelectDistTeacher
 from .FixedPercWrongTeacher import FixedPercWrongTeacher
+from .DynamicPercWrongTeacher import DynamicPercWrongTeacher

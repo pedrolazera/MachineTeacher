@@ -12,6 +12,7 @@ class FixedPercWrongTeacher(Teacher):
 	_STRATEGY_DOUBLE_INCREMENT = 0
 	_STRATEGY_DOUBLE_SIZE = 1
 	_FRAC_WRONG_INCREMENT = 0.1
+	_STATE_DONE = False
 
 	_STATE_SEND_NEW_IDS = 0
 	_STATE_CHOOSE_BATCH_SIZE_NEW_IDS = 1
@@ -28,8 +29,7 @@ class FixedPercWrongTeacher(Teacher):
 		self.strategy = strategy
 		self.frac_wrong_increment = frac_wrong_increment
 		self.sample_size = sample_size
-		self.qtd_untrained_tested_examples = 0
-		self.state_new_ids = self._STATE_SEND_NEW_IDS
+		
 
 	def start(self, X, y, time_left: float):
 		self._start(X, y, time_left)
@@ -37,6 +37,9 @@ class FixedPercWrongTeacher(Teacher):
 		self.m = y.size
 		self.S_current_size = 0
 		self.batch_size = self.sample_size
+		self.qtd_untrained_tested_examples = 0
+		self.state_new_ids = self._STATE_SEND_NEW_IDS
+		self._STATE_DONE = False
 		
 		self.shuffled_ids = self._get_shuffled_ids()
 
@@ -79,7 +82,7 @@ class FixedPercWrongTeacher(Teacher):
 		return self._send_new_ids(new_ids)
 
 	def get_new_examples(self, test_ids, test_labels, time_left: float):
-		if not self._keep_going():
+		if not self._keep_going() or self._STATE_DONE:
 			return np.array([])
 
 		random_size = np.ceil(self.batch_size*(1-self.frac_wrong_increment))
@@ -121,6 +124,10 @@ class FixedPercWrongTeacher(Teacher):
 			assert (error > 0 or len(wrong_labels) == 0)
 			assert (error < 1 or len(wrong_labels) == len(test_ids))
 
+			if np.isclose(error, 0): 
+				self._STATE_DONE = True
+				return np.array([])
+
 			increment = int((self.frac_wrong_increment*self.batch_size)/error)
 			increment -= int(self.frac_wrong_increment*self.batch_size)
 			increment = max(increment, 0)
@@ -152,11 +159,6 @@ class FixedPercWrongTeacher(Teacher):
 		self.S_current_size += len(new_ids)
 		return new_ids
 
-	def _get_shuffled_ids(self):
-		ids = np.arange(self.m, dtype=int)
-		f_shuffle = np.random.RandomState(self.seed).shuffle
-		f_shuffle(ids)
-		return ids
 
 	def get_params(self) -> dict:
 		return {
