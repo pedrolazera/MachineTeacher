@@ -165,4 +165,6 @@ class FixedPercWrongTeacher(Teacher):
 			"seed": self.seed,
 			"frac_start": self.frac_start,
 			"strategy": self.strategy,
+			"frac_wrong_increment": self.frac_wrong_increment,
+			"sample_size": self.sample_size
 			}

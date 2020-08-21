@@ -33,3 +33,9 @@ class SingleBatchTeacher(Teacher):
 		f_shuffle = np.random.RandomState(self.seed).shuffle
 		f_shuffle(ids)
 		return ids
+
+	def get_params(self) -> dict:
+		return {
+			"seed": self.seed,
+			"frac_dataset": self.frac_dataset
+			}

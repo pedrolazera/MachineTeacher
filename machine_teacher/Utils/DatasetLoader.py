@@ -91,7 +91,25 @@ def _get_is_numeric(dataset_name):
 		
 		"Skin_NonSkin.csv": True,
 		"Skin_NonSkin_train.csv": True,
-		"Skin_NonSkin_test.csv": True
+		"Skin_NonSkin_test.csv": True,
+
+		"codrna_test.csv": True,
+		"codrna_train.csv": True,
+
+		"BNG_satimage_test.csv": True,
+		"BNG_satimage_train.csv": True,
+
+		"BNG_spectf_test_train.csv": True,
+		"BNG_spectf_test_test.csv": True,
+
+		"BNG_wine_train.csv": True,
+		"BNG_wine_test.csv": True,
+
+		"BNG_eucalyptus_train.csv": True,
+		"BNG_eucalyptus_test.csv": True,
+
+		"BNG_letter_5000_1_train.csv": True,
+		"BNG_letter_5000_1_test.csv": True
 	}
 
 	assert dataset_name in _d, "dataset {} " + str(dataset_name) + " nao cadastrado"

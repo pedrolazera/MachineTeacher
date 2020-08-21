@@ -1,1 +1,9 @@
 /results/**
+
+# jupyter notebook
+*.ipynb_checkpoints
+*.ipynb
+
+
+# docs
+# machine_teacher/docs
