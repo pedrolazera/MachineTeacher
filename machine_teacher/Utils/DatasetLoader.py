@@ -109,7 +109,43 @@ def _get_is_numeric(dataset_name):
 		"BNG_eucalyptus_test.csv": True,
 
 		"BNG_letter_5000_1_train.csv": True,
-		"BNG_letter_5000_1_test.csv": True
+		"BNG_letter_5000_1_test.csv": True,
+
+		"aloi_train.csv": True,
+		"aloi_test.csv": True,
+
+		"BayesianNetworkGenerator_spambase_train.csv": False,
+		"BayesianNetworkGenerator_spambase_test.csv": False,
+
+		"BNG_mfeat_fourier_train.csv": True,
+		"BNG_mfeat_fourier_test.csv": True,
+
+		"cifar_10_train.csv": True,
+		"cifar_10_test.csv": True,
+
+		"Diabetes130US_train.csv": True,
+		"Diabetes130US_test.csv": True,
+
+		"GTSRB-HueHist_train.csv": True,
+		"GTSRB-HueHist_test.csv": True,
+
+		"jannis_train.csv": True,
+		"jannis_test.csv": True,
+
+		"MiniBooNE_train.csv": True,
+		"MiniBooNE_test.csv": True,
+
+		"nomao_train.csv": True,
+		"nomao_test.csv": True,
+
+		"SantanderCustomerSatisfaction_train.csv": True,
+		"SantanderCustomerSatisfaction_test.csv": True,
+
+		"vehicle_sensIT_train.csv": True,
+		"vehicle_sensIT_test.csv": True,
+
+		"volkert_train.csv": True,
+		"volkert_test.csv": True
 	}
 
 	assert dataset_name in _d, "dataset {} " + str(dataset_name) + " nao cadastrado"

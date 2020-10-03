@@ -57,7 +57,8 @@ def teach(T: Teacher, L: Learner,
 	X: InputSpace, X_labels: Labels, 
 	X_validation: InputSpace = None, X_validation_labels: Labels = None, *,
 	dataset_name = TeachResult._DATASET_STD_NAME,
-	time_limit = _TIME_LIMIT) -> TeachResult:
+	time_limit = _TIME_LIMIT,
+	union_new_set = True) -> TeachResult:
 	# timer
 	timer = Timer()
 	ok_timer = None
@@ -124,7 +125,10 @@ def teach(T: Teacher, L: Learner,
 
 		if len(new_train_ids) > 0:
 			timer.tick("training")
-			train_ids = np.append(train_ids, new_train_ids)
+			if union_new_set:
+				train_ids = np.append(train_ids, new_train_ids)
+			else:
+				train_ids = new_train_ids
 
 			assert len(train_ids) <= get_qtd_rows(X)
 			
@@ -145,7 +149,7 @@ def teach(T: Teacher, L: Learner,
 	assert ok_timer is not None
 	assert ok_train_ids is not None
 	assert len(ok_train_ids) == len(set(ok_train_ids))
-
+	
 	# monta o teaching result
 	# # hipótese final do learner
 	L.fit(X[ok_train_ids], X_labels[ok_train_ids])
